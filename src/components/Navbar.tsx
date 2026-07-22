@@ -1,0 +1,87 @@
+import { Link, NavLink } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
+
+const NAV_LINKS = [
+  { label: 'Shop All', to: '/shop' },
+  { label: 'New Arrivals', to: '/shop?tag=new' },
+  { label: 'Outerwear', to: '/shop?category=Outerwear' },
+  { label: 'Accessories', to: '/shop?category=Accessories' },
+]
+
+export default function Navbar() {
+  const { itemCount } = useCart()
+
+  return (
+    <header className="border-b border-border bg-surface">
+      <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-6">
+        <Link to="/" className="text-lg font-medium tracking-[0.22em] text-ink">
+          MEBFACTORY
+        </Link>
+
+        <nav className="hidden items-center gap-8 md:flex">
+          {NAV_LINKS.map((link) => (
+            <NavLink
+              key={link.label}
+              to={link.to}
+              className="label text-ink transition-colors hover:text-muted"
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-5">
+          <button type="button" aria-label="Search" className="text-ink">
+            <SearchIcon />
+          </button>
+          <button type="button" aria-label="Wishlist" className="text-ink">
+            <HeartIcon />
+          </button>
+          <Link to="/cart" aria-label="Cart" className="relative text-ink">
+            <BagIcon />
+            {itemCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center bg-charcoal text-[10px] font-medium text-white">
+                {itemCount}
+              </span>
+            )}
+          </Link>
+        </div>
+      </div>
+    </header>
+  )
+}
+
+function SearchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M21 21l-4.35-4.35" />
+    </svg>
+  )
+}
+
+function HeartIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  )
+}
+
+function BagIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M6 7h12l1 14H5L6 7z" />
+      <path d="M9 7a3 3 0 0 1 6 0" />
+    </svg>
+  )
+}
