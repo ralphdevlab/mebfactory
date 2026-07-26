@@ -74,7 +74,7 @@ export default function ProductDetail() {
                   onClick={() => setSelectedSize(size)}
                   className={`label flex h-11 min-w-11 items-center justify-center border px-3 transition-colors ${
                     selectedSize === size
-                      ? 'border-ink bg-ink text-white'
+                      ? 'border-ink bg-ink text-surface'
                       : 'border-border text-ink hover:border-charcoal'
                   }`}
                 >

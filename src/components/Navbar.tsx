@@ -13,8 +13,8 @@ export default function Navbar() {
 
   return (
     <header className="border-b border-border bg-surface">
-      <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-6">
-        <Link to="/" className="text-lg font-medium tracking-[0.22em] text-ink">
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-3 md:px-6">
+        <Link to="/" className="text-sm font-medium tracking-[0.18em] text-ink">
           MEBFACTORY
         </Link>
 
@@ -23,7 +23,7 @@ export default function Navbar() {
             <NavLink
               key={link.label}
               to={link.to}
-              className="label text-ink transition-colors hover:text-muted"
+              className="text-[10px] font-medium uppercase tracking-[0.14em] text-ink transition-colors hover:text-muted"
             >
               {link.label}
             </NavLink>
@@ -40,7 +40,7 @@ export default function Navbar() {
           <Link to="/cart" aria-label="Cart" className="relative text-ink">
             <BagIcon />
             {itemCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center bg-charcoal text-[10px] font-medium text-white">
+              <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center bg-charcoal text-[10px] font-medium text-surface">
                 {itemCount}
               </span>
             )}

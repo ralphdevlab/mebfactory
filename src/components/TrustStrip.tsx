@@ -1,17 +1,17 @@
 const ITEMS = [
-  { title: 'Free Shipping', icon: TruckIcon },
-  { title: 'Free Returns', icon: ReturnIcon },
-  { title: 'Secure Checkout', icon: LockIcon },
+  { title: 'Free shipping over $75', icon: TruckIcon },
+  { title: 'Easy 30-day returns', icon: ReturnIcon },
+  { title: 'Safe & secure checkout', icon: LockIcon },
 ]
 
 export default function TrustStrip() {
   return (
-    <div className="border-y border-border bg-surface">
-      <div className="mx-auto flex max-w-[1440px] flex-col divide-y divide-border sm:grid sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+    <div className="rounded-[6px] border-y border-border bg-surface">
+      <div className="mx-auto grid max-w-[1440px] grid-cols-1 divide-y-[0.5px] divide-border md:grid-cols-3 md:divide-x-[0.5px] md:divide-y-0">
         {ITEMS.map((item) => (
-          <div key={item.title} className="flex items-center justify-center gap-3 px-6 py-4 sm:gap-4 sm:py-10">
+          <div key={item.title} className="flex items-center justify-center gap-2 py-3 md:py-4">
             <item.icon />
-            <p className="label text-ink">{item.title}</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-ink">{item.title}</p>
           </div>
         ))}
       </div>
@@ -22,7 +22,7 @@ export default function TrustStrip() {
 function TruckIcon() {
   return (
     <svg
-      className="h-[18px] w-[18px] shrink-0 sm:h-[26px] sm:w-[26px]"
+      className="h-4 w-4 shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -39,7 +39,7 @@ function TruckIcon() {
 function ReturnIcon() {
   return (
     <svg
-      className="h-[18px] w-[18px] shrink-0 sm:h-[26px] sm:w-[26px]"
+      className="h-4 w-4 shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -54,7 +54,7 @@ function ReturnIcon() {
 function LockIcon() {
   return (
     <svg
-      className="h-[18px] w-[18px] shrink-0 sm:h-[26px] sm:w-[26px]"
+      className="h-4 w-4 shrink-0"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
