@@ -86,4 +86,20 @@ router.get("/me", requireAuth, async (req: AuthRequest, res) => {
   }
 });
 
+router.patch("/me", requireAuth, async (req: AuthRequest, res) => {
+  try {
+    const { firstName, lastName } = req.body;
+
+    const user = await prisma.user.update({
+      where: { id: req.userId },
+      data: { firstName, lastName },
+      select: { id: true, email: true, firstName: true, lastName: true, createdAt: true },
+    });
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
 export default router;

@@ -1,15 +1,31 @@
+import { Link } from 'react-router-dom'
+
 const FOOTER_COLUMNS = [
   {
     heading: 'Shop',
-    links: ['New Arrivals', 'Outerwear', 'Knitwear', 'Accessories'],
+    links: [
+      { label: 'New Arrivals', to: '/shop?new=true' },
+      { label: 'Outerwear', to: '/shop?category=Outerwear' },
+      { label: 'Knitwear', to: '/shop?category=Knitwear' },
+      { label: 'Accessories', to: '/shop?category=Accessories' },
+    ],
   },
   {
     heading: 'Help',
-    links: ['Shipping', 'Returns', 'Size Guide', 'Contact'],
+    links: [
+      { label: 'Shipping', to: '/shop' },
+      { label: 'Returns', to: '/shop' },
+      { label: 'Size Guide', to: '/shop' },
+      { label: 'Contact', to: '/contact' },
+    ],
   },
   {
     heading: 'About',
-    links: ['Our Story', 'Sustainability', 'Careers'],
+    links: [
+      { label: 'Our Story', to: '/shop' },
+      { label: 'Sustainability', to: '/shop' },
+      { label: 'Careers', to: '/shop' },
+    ],
   },
 ]
 
@@ -30,10 +46,10 @@ export default function Footer() {
                 </p>
                 <ul className="mt-2 flex flex-col gap-1.5 sm:mt-4 sm:gap-3">
                   {col.links.map((link) => (
-                    <li key={link}>
-                      <a href="#" className="text-[10px] font-normal text-muted hover:text-ink sm:text-sm">
-                        {link}
-                      </a>
+                    <li key={link.label}>
+                      <Link to={link.to} className="text-[10px] font-normal text-muted hover:text-ink sm:text-sm">
+                        {link.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -47,12 +63,12 @@ export default function Footer() {
             © 2026 MEBFACTORY. ALL RIGHTS RESERVED.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted hover:text-ink sm:text-[11px]">
+            <Link to="/shop" className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted hover:text-ink sm:text-[11px]">
               Privacy
-            </a>
-            <a href="#" className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted hover:text-ink sm:text-[11px]">
+            </Link>
+            <Link to="/shop" className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted hover:text-ink sm:text-[11px]">
               Terms
-            </a>
+            </Link>
           </div>
         </div>
       </div>

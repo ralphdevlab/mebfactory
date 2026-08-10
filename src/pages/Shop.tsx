@@ -7,7 +7,8 @@ import type { Product } from '../types'
 export default function Shop() {
   const [searchParams] = useSearchParams()
   const initialCategory = searchParams.get('category') ?? ''
-  const initialTag = searchParams.get('tag') ?? ''
+  const initialNew = searchParams.get('new') === 'true'
+  const initialSale = searchParams.get('sale') === 'true'
 
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -16,8 +17,8 @@ export default function Shop() {
     initialCategory ? [initialCategory] : [],
   )
   const [activeSizes, setActiveSizes] = useState<string[]>([])
-  const [saleOnly, setSaleOnly] = useState(initialTag === 'sale')
-  const [newOnly, setNewOnly] = useState(initialTag === 'new')
+  const [saleOnly, setSaleOnly] = useState(initialSale)
+  const [newOnly, setNewOnly] = useState(initialNew)
 
   // Only the initial `?category=` from the URL is sent to the API - the
   // backend's GET /api/products only supports a single `category` (and
@@ -25,14 +26,18 @@ export default function Shop() {
   // this page offers, so everything past that first load is filtered
   // client-side against whatever the API returned, same as it always was.
   // Deliberately runs once on mount, not on every `initialCategory` change:
-  // this component already treats every URL param (category, tag) as an
+  // this component already treats every URL param (category, new, sale) as an
   // initial value only, the same way the size/sale/new filter state below
   // does - re-fetching on later URL changes without also resetting those
   // filter checkboxes would leave the checkboxes and the fetched list out
   // of sync with each other.
   useEffect(() => {
     setLoading(true)
-    fetchProducts(initialCategory ? { category: initialCategory } : undefined)
+    const params =
+      initialCategory || initialNew
+        ? { ...(initialCategory ? { category: initialCategory } : {}), ...(initialNew ? { isNew: true } : {}) }
+        : undefined
+    fetchProducts(params)
       .then(setProducts)
       .finally(() => setLoading(false))
   }, [])
