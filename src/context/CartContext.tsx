@@ -1,12 +1,33 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
-import type { CartLine } from '../types'
-import { getProductById } from '../data/products'
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { api } from '../lib/api'
+import { mapApiProduct, type ApiProduct } from '../lib/products'
+import { useAuth } from './AuthContext'
+import type { CartLine, Product } from '../types'
+
+interface ApiCartItem {
+  id: string
+  productId: string
+  size: string
+  quantity: number
+  product: ApiProduct
+}
+
+function mapApiCartItem(item: ApiCartItem): CartLine {
+  return {
+    id: item.id,
+    productId: item.productId,
+    size: item.size,
+    quantity: item.quantity,
+    product: mapApiProduct(item.product),
+  }
+}
 
 interface CartContextValue {
   lines: CartLine[]
-  addLine: (productId: string, size: string, quantity?: number) => void
-  removeLine: (productId: string, size: string) => void
-  updateQuantity: (productId: string, size: string, quantity: number) => void
+  addToCart: (product: Product, size: string, quantity?: number) => Promise<void>
+  removeFromCart: (id: string) => Promise<void>
+  updateQuantity: (id: string, quantity: number) => Promise<void>
+  clearCart: () => Promise<void>
   itemCount: number
   subtotal: number
 }
@@ -14,50 +35,87 @@ interface CartContextValue {
 const CartContext = createContext<CartContextValue | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth()
   const [lines, setLines] = useState<CartLine[]>([])
 
-  const addLine = (productId: string, size: string, quantity = 1) => {
+  // Re-sync whenever login state changes. Logging in fetches the account's
+  // real cart from the backend; logging out resets to an empty cart rather
+  // than falling back to whatever guest lines existed before login - merging
+  // a guest cart into an account cart on login is a deliberate product
+  // decision that wasn't specified, so it's a known follow-up, not something
+  // guessed at here.
+  useEffect(() => {
+    if (!user) {
+      setLines([])
+      return
+    }
+    api.get<ApiCartItem[]>('/api/cart').then((items) => {
+      setLines(items.map(mapApiCartItem))
+    })
+  }, [user])
+
+  const addToCart = async (product: Product, size: string, quantity = 1) => {
+    if (user) {
+      const item = await api.post<ApiCartItem>('/api/cart', { productId: product.id, size, quantity })
+      setLines((prev) => [...prev, mapApiCartItem(item)])
+      return
+    }
+
+    // Guest cart: merge into an existing line for the same product+size
+    // instead of adding a duplicate row, matching how the backend cart
+    // already behaves for repeated adds.
     setLines((prev) => {
-      const existing = prev.find((l) => l.productId === productId && l.size === size)
+      const existing = prev.find((l) => l.productId === product.id && l.size === size)
       if (existing) {
         return prev.map((l) =>
-          l.productId === productId && l.size === size
-            ? { ...l, quantity: l.quantity + quantity }
-            : l,
+          l.productId === product.id && l.size === size ? { ...l, quantity: l.quantity + quantity } : l,
         )
       }
-      return [...prev, { productId, size, quantity }]
+      return [...prev, { id: crypto.randomUUID(), productId: product.id, size, quantity, product }]
     })
   }
 
-  const removeLine = (productId: string, size: string) => {
-    setLines((prev) => prev.filter((l) => !(l.productId === productId && l.size === size)))
+  const removeFromCart = async (id: string) => {
+    if (user) {
+      await api.delete(`/api/cart/${id}`)
+    }
+    setLines((prev) => prev.filter((l) => l.id !== id))
   }
 
-  const updateQuantity = (productId: string, size: string, quantity: number) => {
+  const updateQuantity = async (id: string, quantity: number) => {
     if (quantity <= 0) {
-      removeLine(productId, size)
+      await removeFromCart(id)
       return
     }
-    setLines((prev) =>
-      prev.map((l) => (l.productId === productId && l.size === size ? { ...l, quantity } : l)),
-    )
+    if (user) {
+      await api.patch(`/api/cart/${id}`, { quantity })
+    }
+    setLines((prev) => prev.map((l) => (l.id === id ? { ...l, quantity } : l)))
+  }
+
+  const clearCart = async () => {
+    if (user) {
+      await api.delete('/api/cart')
+    }
+    setLines([])
   }
 
   const itemCount = useMemo(() => lines.reduce((sum, l) => sum + l.quantity, 0), [lines])
 
   const subtotal = useMemo(
-    () =>
-      lines.reduce((sum, l) => {
-        const product = getProductById(l.productId)
-        if (!product) return sum
-        const price = product.salePrice ?? product.price
-        return sum + price * l.quantity
-      }, 0),
+    () => lines.reduce((sum, l) => sum + (l.product.salePrice ?? l.product.price) * l.quantity, 0),
     [lines],
   )
 
-  const value: CartContextValue = { lines, addLine, removeLine, updateQuantity, itemCount, subtotal }
+  const value: CartContextValue = {
+    lines,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    itemCount,
+    subtotal,
+  }
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }

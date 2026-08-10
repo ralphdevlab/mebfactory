@@ -1,18 +1,40 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Button from '../components/Button'
-import { getProductById } from '../data/products'
+import { fetchProduct } from '../lib/products'
 import { useCart } from '../context/CartContext'
+import type { Product } from '../types'
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { addLine } = useCart()
+  const { addToCart } = useCart()
 
-  const product = id ? getProductById(id) : undefined
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState(true)
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
+
+  useEffect(() => {
+    if (!id) {
+      setLoading(false)
+      return
+    }
+    setLoading(true)
+    fetchProduct(id)
+      .then(setProduct)
+      .catch(() => setProduct(null))
+      .finally(() => setLoading(false))
+  }, [id])
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-[1440px] px-6 py-20 text-center">
+        <p className="text-sm font-normal text-muted">Loading...</p>
+      </div>
+    )
+  }
 
   if (!product) {
     return (
@@ -29,7 +51,7 @@ export default function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!selectedSize) return
-    addLine(product.id, selectedSize)
+    addToCart(product, selectedSize)
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
   }

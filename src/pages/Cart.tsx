@@ -1,10 +1,9 @@
 import { Link } from 'react-router-dom'
 import Button from '../components/Button'
 import { useCart } from '../context/CartContext'
-import { getProductById } from '../data/products'
 
 export default function Cart() {
-  const { lines, removeLine, updateQuantity, subtotal } = useCart()
+  const { lines, removeFromCart, updateQuantity, subtotal } = useCart()
 
   if (lines.length === 0) {
     return (
@@ -28,12 +27,11 @@ export default function Cart() {
         <div className="flex-1">
           <div className="flex flex-col divide-y divide-border">
             {lines.map((line) => {
-              const product = getProductById(line.productId)
-              if (!product) return null
+              const product = line.product
               const price = product.salePrice ?? product.price
 
               return (
-                <div key={`${line.productId}-${line.size}`} className="flex gap-5 py-6 first:pt-0">
+                <div key={line.id} className="flex gap-5 py-6 first:pt-0">
                   <Link to={`/product/${product.id}`} className="h-28 w-24 shrink-0 overflow-hidden bg-hero">
                     <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
                   </Link>
@@ -54,7 +52,7 @@ export default function Cart() {
                       <div className="flex items-center border border-border">
                         <button
                           type="button"
-                          onClick={() => updateQuantity(line.productId, line.size, line.quantity - 1)}
+                          onClick={() => updateQuantity(line.id, line.quantity - 1)}
                           className="flex h-8 w-8 items-center justify-center text-ink hover:bg-hero"
                           aria-label="Decrease quantity"
                         >
@@ -63,7 +61,7 @@ export default function Cart() {
                         <span className="w-8 text-center text-sm font-normal text-ink">{line.quantity}</span>
                         <button
                           type="button"
-                          onClick={() => updateQuantity(line.productId, line.size, line.quantity + 1)}
+                          onClick={() => updateQuantity(line.id, line.quantity + 1)}
                           className="flex h-8 w-8 items-center justify-center text-ink hover:bg-hero"
                           aria-label="Increase quantity"
                         >
@@ -73,7 +71,7 @@ export default function Cart() {
 
                       <button
                         type="button"
-                        onClick={() => removeLine(line.productId, line.size)}
+                        onClick={() => removeFromCart(line.id)}
                         className="label text-muted hover:text-ink"
                       >
                         Remove

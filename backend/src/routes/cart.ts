@@ -26,17 +26,30 @@ router.post("/", async (req: AuthRequest, res) => {
       return res.status(400).json({ error: "productId and size are required" });
     }
 
-    const item = await prisma.cartItem.create({
-      data: {
-        userId: req.userId as string,
-        productId,
-        size,
-        quantity: quantity ?? 1,
-      },
-      include: { product: true },
+    // Adding the same product+size again increments the existing line
+    // instead of creating a duplicate row, matching how a guest (local,
+    // unauthenticated) cart already merges repeated adds.
+    const existing = await prisma.cartItem.findFirst({
+      where: { userId: req.userId, productId, size },
     });
 
-    res.status(201).json(item);
+    const item = existing
+      ? await prisma.cartItem.update({
+          where: { id: existing.id },
+          data: { quantity: existing.quantity + (quantity ?? 1) },
+          include: { product: true },
+        })
+      : await prisma.cartItem.create({
+          data: {
+            userId: req.userId as string,
+            productId,
+            size,
+            quantity: quantity ?? 1,
+          },
+          include: { product: true },
+        });
+
+    res.status(existing ? 200 : 201).json(item);
   } catch (err) {
     res.status(500).json({ error: "Something went wrong" });
   }

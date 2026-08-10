@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 
 const NAV_LINKS = [
   { label: 'Shop All', to: '/shop' },
@@ -10,6 +11,7 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const { itemCount } = useCart()
+  const { user, loading, logout } = useAuth()
 
   return (
     <header className="border-b border-border bg-surface">
@@ -31,6 +33,31 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-5">
+          {!loading && (
+            <div className="hidden items-center gap-3 md:flex">
+              {user ? (
+                <>
+                  <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-ink">
+                    Hi, {user.firstName ?? user.email}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted hover:text-ink"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  className="text-[10px] font-medium uppercase tracking-[0.14em] text-ink hover:text-muted"
+                >
+                  Login
+                </Link>
+              )}
+            </div>
+          )}
           <button type="button" aria-label="Search" className="text-ink">
             <SearchIcon />
           </button>

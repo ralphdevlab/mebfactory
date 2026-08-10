@@ -1,13 +1,22 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../components/Button'
 import TrustStrip from '../components/TrustStrip'
 import ProductCard from '../components/ProductCard'
 import CategoryCard from '../components/CategoryCard'
-import { products } from '../data/products'
+import { fetchProducts } from '../lib/products'
 import { categories } from '../data/categories'
+import type { Product } from '../types'
 
 export default function Home() {
-  const featured = products.slice(0, 8)
+  const [featured, setFeatured] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchProducts()
+      .then((products) => setFeatured(products.slice(0, 8)))
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <div>
@@ -34,11 +43,15 @@ export default function Home() {
             See all
           </Link>
         </div>
-        <div className="mt-8 grid grid-cols-2 gap-1 md:grid-cols-4">
-          {featured.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {loading ? (
+          <p className="mt-8 text-sm font-normal text-muted">Loading products...</p>
+        ) : (
+          <div className="mt-8 grid grid-cols-2 gap-1 md:grid-cols-4">
+            {featured.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mx-auto max-w-[1440px] px-6 pb-20">

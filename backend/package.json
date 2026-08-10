@@ -7,12 +7,16 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "db:push": "prisma db push",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "db:seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.3",
