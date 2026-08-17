@@ -13,7 +13,13 @@ export async function requireAdmin(req: AuthRequest, res: Response, next: NextFu
   try {
     const user = await prisma.user.findUnique({ where: { id: req.userId }, select: { email: true } });
 
-    if (!user || !(user.email.endsWith("@mebfactory.com") || ADMIN_EMAILS.includes(user.email))) {
+    const isAdmin =
+      !!user &&
+      (user.email.endsWith("@mebfactory.com") ||
+        ADMIN_EMAILS.includes(user.email) ||
+        user.email === process.env.ADMIN_EMAIL);
+
+    if (!isAdmin) {
       return res.status(403).json({ error: "Forbidden" });
     }
 

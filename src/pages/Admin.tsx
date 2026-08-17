@@ -10,8 +10,9 @@ import type { ApiOrder } from '../lib/orders'
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 const ORDER_STATUSES = ['pending', 'processing', 'shipped', 'delivered']
 
-// In addition to anyone @mebfactory.com, lets specific test accounts in via
-// VITE_ADMIN_EMAILS - kept in sync with the backend's ADMIN_EMAILS so a
+// In addition to anyone @mebfactory.com, lets specific accounts in via
+// VITE_ADMIN_EMAILS (comma-separated list) or VITE_ADMIN_EMAIL (single
+// address) - kept in sync with the backend's ADMIN_EMAILS/ADMIN_EMAIL so a
 // non-@mebfactory.com admin isn't redirected away from a page whose API
 // calls would otherwise succeed for them.
 const EXTRA_ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS ?? '')
@@ -20,7 +21,11 @@ const EXTRA_ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS ?? '')
   .filter(Boolean)
 
 function isAdminEmail(email: string) {
-  return email.endsWith('@mebfactory.com') || EXTRA_ADMIN_EMAILS.includes(email)
+  return (
+    email.endsWith('@mebfactory.com') ||
+    EXTRA_ADMIN_EMAILS.includes(email) ||
+    email === import.meta.env.VITE_ADMIN_EMAIL
+  )
 }
 
 type Tab = 'products' | 'orders'
