@@ -22,6 +22,8 @@ router.post("/", async (req: AuthRequest, res) => {
   try {
     const { productId, size, quantity } = req.body;
 
+    console.log(`[cart] POST userId=${req.userId} body=${JSON.stringify(req.body)}`);
+
     if (!productId || !size) {
       return res.status(400).json({ error: "productId and size are required" });
     }
@@ -49,8 +51,11 @@ router.post("/", async (req: AuthRequest, res) => {
           include: { product: true },
         });
 
+    console.log(`[cart] saved id=${item.id} userId=${req.userId} productId=${productId} quantity=${item.quantity}`);
+
     res.status(existing ? 200 : 201).json(item);
   } catch (err) {
+    console.error(`[cart] POST failed for userId=${req.userId}:`, err);
     res.status(500).json({ error: "Something went wrong" });
   }
 });

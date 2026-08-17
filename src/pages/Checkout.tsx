@@ -3,6 +3,8 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import Button from '../components/Button'
+import EmptyState from '../components/EmptyState'
+import { BagIcon } from '../components/icons'
 import { api } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
@@ -20,20 +22,59 @@ export default function Checkout() {
   const { subtotal } = useCart()
 
   const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [cartEmpty, setCartEmpty] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) return
-    api
-      .post<CreateIntentResponse>('/api/checkout/create-intent', {})
-      .then((data) => setClientSecret(data.clientSecret))
-      .catch(() => setError('Could not start checkout. Your cart may be empty.'))
+    let cancelled = false
+
+    async function startCheckout() {
+      try {
+        // Confirm the cart actually has items - synced straight from the
+        // backend, not the CartContext snapshot - before attempting to
+        // create a payment intent. Without this, a Stripe/server failure
+        // and a genuinely empty cart both looked identical to the user.
+        const cartItems = await api.get<unknown[]>('/api/cart')
+        if (cancelled) return
+
+        if (cartItems.length === 0) {
+          setCartEmpty(true)
+          return
+        }
+
+        const data = await api.post<CreateIntentResponse>('/api/checkout/create-intent', {})
+        if (cancelled) return
+        setClientSecret(data.clientSecret)
+      } catch {
+        if (!cancelled) {
+          setError('Could not start checkout. Please try again in a moment.')
+        }
+      }
+    }
+
+    startCheckout()
+    return () => {
+      cancelled = true
+    }
   }, [user])
 
   // Wait for the initial "is there a valid token" check, same as Account,
   // so a logged-in user doesn't get bounced to /login on a hard refresh.
   if (!authLoading && !user) {
     return <Navigate to="/login" replace />
+  }
+
+  if (cartEmpty) {
+    return (
+      <EmptyState
+        icon={<BagIcon />}
+        title="Your cart is empty"
+        description="Add something to your cart before checking out."
+        actionLabel="Continue Shopping"
+        actionTo="/shop"
+      />
+    )
   }
 
   return (
