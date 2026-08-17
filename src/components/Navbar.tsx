@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
+import SearchBar from './SearchBar'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 
@@ -16,7 +17,7 @@ export default function Navbar() {
   const { user, loading, logout } = useAuth()
 
   return (
-    <header className="border-b border-border bg-surface">
+    <header className="relative border-b border-border bg-surface">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-3 md:px-6">
         <Link to="/" className="text-sm font-medium tracking-[0.18em] text-ink">
           MEBFACTORY
@@ -63,9 +64,7 @@ export default function Navbar() {
               )}
             </div>
           )}
-          <button type="button" aria-label="Search" className="text-ink">
-            <SearchIcon />
-          </button>
+          <SearchBar />
           <button type="button" aria-label="Wishlist" className="text-ink">
             <HeartIcon />
           </button>
@@ -83,15 +82,6 @@ export default function Navbar() {
         </div>
       </div>
     </header>
-  )
-}
-
-function SearchIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="11" cy="11" r="7" />
-      <path d="M21 21l-4.35-4.35" />
-    </svg>
   )
 }
 

@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import Button from '../components/Button'
+import EmptyState from '../components/EmptyState'
+import { BagIcon } from '../components/icons'
 import { useCart } from '../context/CartContext'
 
 export default function Cart() {
@@ -7,15 +9,13 @@ export default function Cart() {
 
   if (lines.length === 0) {
     return (
-      <div className="mx-auto max-w-[1440px] px-6 py-24 text-center">
-        <h1 className="text-2xl font-medium text-ink">Your Cart Is Empty</h1>
-        <p className="mt-2 text-sm font-normal text-muted">Looks like you haven't added anything yet.</p>
-        <Link to="/shop" className="mt-8 inline-block">
-          <Button variant="primary" className="px-10">
-            Continue Shopping
-          </Button>
-        </Link>
-      </div>
+      <EmptyState
+        icon={<BagIcon />}
+        title="Your cart is empty"
+        description="Looks like you haven't added anything yet."
+        actionLabel="Continue Shopping"
+        actionTo="/shop"
+      />
     )
   }
 
@@ -98,9 +98,11 @@ export default function Cart() {
             <p className="text-sm font-medium text-ink">Total</p>
             <p className="text-sm font-medium text-ink">${subtotal}</p>
           </div>
-          <Button variant="primary" className="mt-6 w-full">
-            Checkout
-          </Button>
+          <Link to="/checkout" className="mt-6 block">
+            <Button variant="primary" className="w-full">
+              Proceed to Checkout
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

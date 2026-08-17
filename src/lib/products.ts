@@ -36,10 +36,15 @@ export function mapApiProduct(p: ApiProduct): Product {
   }
 }
 
-export async function fetchProducts(params?: { category?: string; isNew?: boolean }): Promise<Product[]> {
+export async function fetchProducts(params?: {
+  category?: string
+  isNew?: boolean
+  search?: string
+}): Promise<Product[]> {
   const query = new URLSearchParams()
   if (params?.category) query.set('category', params.category)
   if (params?.isNew) query.set('new', 'true')
+  if (params?.search) query.set('search', params.search)
   const qs = query.toString()
   const apiProducts = await api.get<ApiProduct[]>(`/api/products${qs ? `?${qs}` : ''}`)
   return apiProducts.map(mapApiProduct)

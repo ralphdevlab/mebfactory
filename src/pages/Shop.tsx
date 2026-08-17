@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
+import ProductCardSkeleton from '../components/ProductCardSkeleton'
 import { fetchProducts } from '../lib/products'
 import type { Product } from '../types'
 
@@ -98,7 +99,11 @@ export default function Shop() {
 
         <div className="flex-1">
           {loading ? (
-            <p className="py-20 text-center text-sm font-normal text-muted">Loading products...</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
           ) : filtered.length === 0 ? (
             <p className="py-20 text-center text-sm font-normal text-muted">
               No products match the selected filters.

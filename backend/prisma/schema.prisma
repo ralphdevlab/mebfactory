@@ -27,7 +27,7 @@ model Product {
   salePrice   Float?
   category    String
   sizes       String[]
-  images      String[]
+  images      String[] @default([])
   isNew       Boolean  @default(false)
   inStock     Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -55,13 +55,14 @@ model WishlistItem {
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  userId     String
-  status     String      @default("pending")
-  total      Float
-  createdAt  DateTime    @default(now())
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items      OrderItem[]
+  id              String      @id @default(cuid())
+  userId          String
+  status          String      @default("pending")
+  total           Float
+  paymentIntentId String?     @unique
+  createdAt       DateTime    @default(now())
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items           OrderItem[]
 }
 
 model OrderItem {

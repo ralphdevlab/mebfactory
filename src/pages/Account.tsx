@@ -2,27 +2,12 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
+import EmptyState from '../components/EmptyState'
+import { ReceiptIcon, HeartIcon } from '../components/icons'
 import { api } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { useWishlist } from '../context/WishlistContext'
-import type { ApiProduct } from '../lib/products'
-
-interface ApiOrderItem {
-  id: string
-  productId: string
-  size: string
-  quantity: number
-  price: number
-  product: ApiProduct
-}
-
-interface ApiOrder {
-  id: string
-  status: string
-  total: number
-  createdAt: string
-  items: ApiOrderItem[]
-}
+import type { ApiOrder } from '../lib/orders'
 
 type Tab = 'profile' | 'orders' | 'wishlist'
 
@@ -145,12 +130,13 @@ function OrdersTab() {
 
   if (orders.length === 0) {
     return (
-      <div>
-        <p className="text-sm font-normal text-muted">You haven't placed any orders yet.</p>
-        <Link to="/shop" className="label mt-4 inline-block text-ink underline">
-          Start Shopping
-        </Link>
-      </div>
+      <EmptyState
+        icon={<ReceiptIcon />}
+        title="No orders yet"
+        description="Your past orders will show up here."
+        actionLabel="Start Shopping"
+        actionTo="/shop"
+      />
     )
   }
 
@@ -203,12 +189,13 @@ function WishlistTab() {
 
   if (lines.length === 0) {
     return (
-      <div>
-        <p className="text-sm font-normal text-muted">Your wishlist is empty.</p>
-        <Link to="/shop" className="label mt-4 inline-block text-ink underline">
-          Continue Shopping
-        </Link>
-      </div>
+      <EmptyState
+        icon={<HeartIcon />}
+        title="No saved items yet"
+        description="Items you save will show up here."
+        actionLabel="Browse Collection"
+        actionTo="/shop"
+      />
     )
   }
 

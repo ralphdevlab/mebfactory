@@ -5,11 +5,18 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   try {
-    const { category, new: isNew } = req.query;
+    const { category, new: isNew, search } = req.query;
 
     const where: Record<string, unknown> = {};
     if (category) where.category = String(category);
     if (isNew === "true") where.isNew = true;
+    if (search) {
+      const term = String(search);
+      where.OR = [
+        { name: { contains: term, mode: "insensitive" } },
+        { description: { contains: term, mode: "insensitive" } },
+      ];
+    }
 
     const products = await prisma.product.findMany({ where, orderBy: { createdAt: "desc" } });
     res.json(products);

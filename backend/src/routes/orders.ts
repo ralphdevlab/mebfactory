@@ -21,6 +21,8 @@ router.get("/", async (req: AuthRequest, res) => {
 
 router.post("/", async (req: AuthRequest, res) => {
   try {
+    const { paymentIntentId } = req.body;
+
     const cartItems = await prisma.cartItem.findMany({
       where: { userId: req.userId },
       include: { product: true },
@@ -35,26 +37,24 @@ router.post("/", async (req: AuthRequest, res) => {
       return sum + price * item.quantity;
     }, 0);
 
-    const order = await prisma.$transaction(async (tx) => {
-      const created = await tx.order.create({
-        data: {
-          userId: req.userId as string,
-          total,
-          items: {
-            create: cartItems.map((item) => ({
-              productId: item.productId,
-              size: item.size,
-              quantity: item.quantity,
-              price: item.product.salePrice ?? item.product.price,
-            })),
-          },
+    // The cart is intentionally left alone here - it's only cleared once
+    // the Stripe webhook confirms the payment actually succeeded, so a
+    // failed/abandoned payment doesn't silently lose the user's cart.
+    const order = await prisma.order.create({
+      data: {
+        userId: req.userId as string,
+        total,
+        paymentIntentId: paymentIntentId ?? undefined,
+        items: {
+          create: cartItems.map((item) => ({
+            productId: item.productId,
+            size: item.size,
+            quantity: item.quantity,
+            price: item.product.salePrice ?? item.product.price,
+          })),
         },
-        include: { items: { include: { product: true } } },
-      });
-
-      await tx.cartItem.deleteMany({ where: { userId: req.userId } });
-
-      return created;
+      },
+      include: { items: { include: { product: true } } },
     });
 
     res.status(201).json(order);

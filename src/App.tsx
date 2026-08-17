@@ -11,6 +11,10 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Account from './pages/Account'
 import Contact from './pages/Contact'
+import Checkout from './pages/Checkout'
+import OrderConfirmation from './pages/OrderConfirmation'
+import SizeGuide from './pages/SizeGuide'
+import Admin from './pages/Admin'
 
 function App() {
   return (
@@ -31,6 +35,10 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/account" element={<Account />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="/size-guide" element={<SizeGuide />} />
+                <Route path="/admin" element={<Admin />} />
               </Route>
             </Routes>
           </WishlistProvider>

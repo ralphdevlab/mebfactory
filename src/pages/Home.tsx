@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Button from '../components/Button'
 import TrustStrip from '../components/TrustStrip'
 import ProductCard from '../components/ProductCard'
+import ProductCardSkeleton from '../components/ProductCardSkeleton'
 import CategoryCard from '../components/CategoryCard'
 import { fetchProducts } from '../lib/products'
 import { categories } from '../data/categories'
@@ -43,15 +44,11 @@ export default function Home() {
             See all
           </Link>
         </div>
-        {loading ? (
-          <p className="mt-8 text-sm font-normal text-muted">Loading products...</p>
-        ) : (
-          <div className="mt-8 grid grid-cols-2 gap-1 md:grid-cols-4">
-            {featured.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
+        <div className="mt-8 grid grid-cols-2 gap-1 md:grid-cols-4">
+          {loading
+            ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
+            : featured.map((product) => <ProductCard key={product.id} product={product} />)}
+        </div>
       </section>
 
       <section className="mx-auto max-w-[1440px] px-6 pb-20">

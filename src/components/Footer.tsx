@@ -15,7 +15,7 @@ const FOOTER_COLUMNS = [
     links: [
       { label: 'Shipping', to: '/shop' },
       { label: 'Returns', to: '/shop' },
-      { label: 'Size Guide', to: '/shop' },
+      { label: 'Size Guide', to: '/size-guide' },
       { label: 'Contact', to: '/contact' },
     ],
   },
