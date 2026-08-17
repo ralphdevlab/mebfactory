@@ -93,8 +93,20 @@ stripeWebhookRouter.post("/stripe", async (req, res) => {
         include: { items: { include: { product: true } }, user: true },
       });
 
-      await sendOrderConfirmation(updated.user.email, updated);
+      console.log(`[webhook] order ${updated.id} marked paid for userId=${updated.userId}, clearing cart`);
       await prisma.cartItem.deleteMany({ where: { userId: updated.userId } });
+
+      // Best-effort: a broken/misconfigured RESEND_API_KEY throwing here
+      // used to happen BEFORE the cart was cleared above, so the cart never
+      // got cleared at all when email sending failed. Marking the order
+      // paid and clearing the cart are the two things that matter; a failed
+      // confirmation email is unfortunate but shouldn't block either of
+      // them, so it's now last and its own failure is just logged.
+      try {
+        await sendOrderConfirmation(updated.user.email, updated);
+      } catch (emailErr) {
+        console.error(`[webhook] sendOrderConfirmation failed for order ${updated.id}:`, emailErr);
+      }
     }
 
     res.json({ received: true });

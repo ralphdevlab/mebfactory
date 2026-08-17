@@ -65,9 +65,9 @@ export default function Navbar() {
             </div>
           )}
           <SearchBar />
-          <button type="button" aria-label="Wishlist" className="text-ink">
+          <Link to={user ? '/account?tab=wishlist' : '/login'} aria-label="Wishlist" className="text-ink">
             <HeartIcon />
-          </button>
+          </Link>
           <Link to={user ? '/account' : '/login'} aria-label="Account" className="text-ink">
             <UserIcon />
           </Link>

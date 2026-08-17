@@ -105,6 +105,7 @@ function CheckoutForm() {
   const stripe = useStripe()
   const elements = useElements()
   const navigate = useNavigate()
+  const { clearCart } = useCart()
 
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -128,18 +129,30 @@ function CheckoutForm() {
     }
 
     if (paymentIntent && (paymentIntent.status === 'succeeded' || paymentIntent.status === 'processing')) {
+      let order: ApiOrder
       try {
-        // The cart isn't cleared here - it's only cleared once the Stripe
-        // webhook confirms the payment, so a page close/crash right after
-        // this call still leaves the cart intact to retry from.
-        const order = await api.post<ApiOrder>('/api/orders', {
+        order = await api.post<ApiOrder>('/api/orders', {
           paymentIntentId: paymentIntent.id,
         })
-        navigate('/order-confirmation', { state: { order } })
       } catch {
         setError('Payment succeeded, but we could not save your order. Please contact support.')
         setSubmitting(false)
+        return
       }
+
+      // The Stripe webhook is the real source of truth for clearing the
+      // cart server-side once payment is confirmed - this just clears the
+      // local CartContext state too, so the cart/badge update immediately
+      // instead of lagging behind however long the webhook takes to arrive.
+      // Best-effort: if it fails, the webhook still cleans it up shortly
+      // after, so it shouldn't block navigating to the confirmation page.
+      try {
+        await clearCart()
+      } catch {
+        // ignored - non-fatal, see comment above
+      }
+
+      navigate('/order-confirmation', { state: { order } })
       return
     }
 

@@ -38,8 +38,11 @@ function App() {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
                 <Route path="/size-guide" element={<SizeGuide />} />
-                <Route path="/admin" element={<Admin />} />
               </Route>
+              {/* Outside Layout - the admin dashboard has its own dark
+                  sidebar shell, not the storefront navbar/announcement
+                  bar/footer. */}
+              <Route path="/admin" element={<Admin />} />
             </Routes>
           </WishlistProvider>
         </CartProvider>

@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
 import EmptyState from '../components/EmptyState'
@@ -17,9 +17,17 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'wishlist', label: 'Wishlist' },
 ]
 
+const TAB_IDS = TABS.map((t) => t.id)
+
+function isTab(value: string | null): value is Tab {
+  return TAB_IDS.includes(value as Tab)
+}
+
 export default function Account() {
   const { user, loading } = useAuth()
-  const [tab, setTab] = useState<Tab>('profile')
+  const [searchParams] = useSearchParams()
+  const initialTab = searchParams.get('tab')
+  const [tab, setTab] = useState<Tab>(isTab(initialTab) ? initialTab : 'profile')
 
   // Wait for the initial "is there a valid token" check before deciding to
   // redirect, otherwise a logged-in user gets bounced to /login for a split

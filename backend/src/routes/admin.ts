@@ -7,6 +7,50 @@ const router = Router();
 
 router.use(requireAuth, requireAdmin);
 
+router.get("/stats", async (req, res) => {
+  try {
+    const [totalOrders, revenue, totalProducts, totalUsers] = await Promise.all([
+      prisma.order.count(),
+      // "pending" orders haven't actually been paid for yet (Stripe hasn't
+      // confirmed them), so they're excluded from revenue.
+      prisma.order.aggregate({
+        _sum: { total: true },
+        where: { status: { not: "pending" } },
+      }),
+      prisma.product.count(),
+      prisma.user.count(),
+    ]);
+
+    res.json({
+      totalOrders,
+      totalRevenue: revenue._sum.total ?? 0,
+      totalProducts,
+      totalUsers,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+router.get("/customers", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        createdAt: true,
+        _count: { select: { orders: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
 router.get("/products", async (req, res) => {
   try {
     const products = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
