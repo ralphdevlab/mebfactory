@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { Product } from '../types'
 import ProductTag from './ProductTag'
+import WishlistButton from './WishlistButton'
 
 export default function ProductCard({ product }: { product: Product }) {
   const onSale = product.salePrice !== undefined
@@ -9,6 +10,10 @@ export default function ProductCard({ product }: { product: Product }) {
     <Link to={`/product/${product.id}`} className="group block">
       <div className="relative aspect-[3/4] overflow-hidden rounded-[6px] bg-hero">
         <ProductTag tag={product.tag} />
+        <WishlistButton
+          product={product}
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-surface/80"
+        />
       </div>
       <div className="pt-2 pb-3">
         <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted">{product.category}</p>

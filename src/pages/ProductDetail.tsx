@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Button from '../components/Button'
+import WishlistButton from '../components/WishlistButton'
 import { fetchProduct } from '../lib/products'
 import { useCart } from '../context/CartContext'
 import type { Product } from '../types'
@@ -72,8 +73,13 @@ export default function ProductDetail() {
         </div>
 
         <div className="max-w-md">
-          <p className="label text-muted">{product.category}</p>
-          <h1 className="mt-2 text-2xl font-medium text-ink">{product.name}</h1>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="label text-muted">{product.category}</p>
+              <h1 className="mt-2 text-2xl font-medium text-ink">{product.name}</h1>
+            </div>
+            <WishlistButton product={product} className="flex h-9 w-9 shrink-0 items-center justify-center" />
+          </div>
 
           <div className="mt-4 flex items-center gap-3">
             {onSale && (
