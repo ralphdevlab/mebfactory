@@ -62,7 +62,7 @@ router.get("/products", async (req, res) => {
 
 router.post("/products", async (req, res) => {
   try {
-    const { name, description, price, salePrice, category, sizes, isNew } = req.body;
+    const { name, description, price, salePrice, category, sizes, isNew, images } = req.body;
 
     if (!name || price == null || !category) {
       return res.status(400).json({ error: "name, price, and category are required" });
@@ -76,6 +76,7 @@ router.post("/products", async (req, res) => {
         salePrice: salePrice ?? null,
         category,
         sizes: sizes ?? [],
+        images: images ?? [],
         isNew: isNew ?? false,
       },
     });
@@ -88,11 +89,11 @@ router.post("/products", async (req, res) => {
 
 router.patch("/products/:id", async (req, res) => {
   try {
-    const { name, description, price, salePrice, category, sizes, isNew } = req.body;
+    const { name, description, price, salePrice, category, sizes, isNew, images } = req.body;
 
     const product = await prisma.product.update({
       where: { id: String(req.params.id) },
-      data: { name, description, price, salePrice, category, sizes, isNew },
+      data: { name, description, price, salePrice, category, sizes, isNew, images },
     });
 
     res.json(product);

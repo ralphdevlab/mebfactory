@@ -11,6 +11,10 @@
   --color-muted: #8A8A8A;
   --color-charcoal: #3D3530;
   --color-sand: #D4A8A0;
+  /* Overridden at runtime by ThemeContext (via an inline style on :root)
+     when a seasonal SiteTheme is active; defaults to the sand accent
+     otherwise. */
+  --color-accent: var(--color-sand);
 
   --radius-none: 0px;
 }

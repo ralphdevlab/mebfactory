@@ -21,3 +21,21 @@ export const api = {
   patch: <T>(path: string, body: unknown) => request<T>(path, { method: 'PATCH', body: JSON.stringify(body) }),
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 }
+
+// Separate from the `api` object above: it sends FormData, not JSON, so it
+// can't set a 'Content-Type: application/json' header or JSON.stringify the
+// body the way request() does - the browser needs to set its own
+// multipart/form-data boundary header instead.
+export async function uploadImage(file: File): Promise<{ url: string }> {
+  const token = localStorage.getItem('token')
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const res = await fetch(`${BASE}/api/admin/upload`, {
+    method: 'POST',
+    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: formData,
+  })
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}

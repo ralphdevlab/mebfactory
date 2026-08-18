@@ -1,9 +1,9 @@
-import { Fragment, useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { Fragment, useEffect, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
 import Modal from '../components/Modal'
-import { api } from '../lib/api'
+import { api, uploadImage } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import type { ApiProduct } from '../lib/products'
 import type { ApiOrder } from '../lib/orders'
@@ -37,13 +37,14 @@ function isAdminEmail(email: string) {
   )
 }
 
-type Tab = 'dashboard' | 'products' | 'orders' | 'customers'
+type Tab = 'dashboard' | 'products' | 'orders' | 'customers' | 'themes'
 
 const NAV_ITEMS: { id: Tab; label: string; icon: (props: { className?: string }) => ReactNode }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: DashboardIcon },
   { id: 'products', label: 'Products', icon: ProductsIcon },
   { id: 'orders', label: 'Orders', icon: OrdersIcon },
   { id: 'customers', label: 'Customers', icon: CustomersIcon },
+  { id: 'themes', label: 'Themes', icon: ThemesIcon },
 ]
 
 export default function Admin() {
@@ -114,6 +115,7 @@ export default function Admin() {
         {tab === 'products' && <ProductsTab />}
         {tab === 'orders' && <OrdersTab />}
         {tab === 'customers' && <CustomersTab />}
+        {tab === 'themes' && <ThemesTab />}
       </main>
     </div>
   )
@@ -267,6 +269,71 @@ function ProductsTab() {
   )
 }
 
+function ImageUploader({
+  images,
+  onAdd,
+  onRemove,
+}: {
+  images: string[]
+  onAdd: (url: string) => void
+  onRemove: (url: string) => void
+}) {
+  const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setError(null)
+    setUploading(true)
+    try {
+      const { url } = await uploadImage(file)
+      onAdd(url)
+    } catch {
+      setError('Could not upload image.')
+    } finally {
+      setUploading(false)
+      if (inputRef.current) inputRef.current.value = ''
+    }
+  }
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-3">
+        {images.map((url) => (
+          <div key={url} className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md border border-border">
+            <img src={url} alt="" className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => onRemove(url)}
+              aria-label="Remove image"
+              className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-xs leading-none text-white"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+
+        <label className="flex h-20 w-20 shrink-0 cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-border text-center text-xs text-muted hover:border-charcoal">
+          {uploading ? 'Uploading...' : '+ Add'}
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            disabled={uploading}
+            className="hidden"
+          />
+        </label>
+      </div>
+
+      {error && <p className="mt-2 text-xs font-normal text-red-600">{error}</p>}
+    </div>
+  )
+}
+
 function AdminProductForm({
   product,
   onCancel,
@@ -282,6 +349,7 @@ function AdminProductForm({
   const [salePrice, setSalePrice] = useState(product?.salePrice != null ? String(product.salePrice) : '')
   const [category, setCategory] = useState(product?.category ?? '')
   const [sizes, setSizes] = useState<string[]>(product?.sizes ?? [])
+  const [images, setImages] = useState<string[]>(product?.images ?? [])
   const [isNew, setIsNew] = useState(product?.isNew ?? false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -302,6 +370,7 @@ function AdminProductForm({
         salePrice: salePrice ? Number(salePrice) : null,
         category,
         sizes,
+        images,
         isNew,
       }
       if (product) {
@@ -339,6 +408,17 @@ function AdminProductForm({
       </div>
 
       <FormField label="Category" value={category} onChange={setCategory} required />
+
+      <div>
+        <p className="label text-ink">Images</p>
+        <div className="mt-2">
+          <ImageUploader
+            images={images}
+            onAdd={(url) => setImages((prev) => [...prev, url])}
+            onRemove={(url) => setImages((prev) => prev.filter((img) => img !== url))}
+          />
+        </div>
+      </div>
 
       <div>
         <p className="label text-ink">Sizes</p>
@@ -575,6 +655,254 @@ function CustomersTab() {
   )
 }
 
+interface Theme {
+  id: string
+  name: string
+  isActive: boolean
+  primaryBg: string
+  accentColor: string
+  heroText: string
+  heroBanner: string | null
+  announcementText: string
+  createdAt: string
+}
+
+function ThemesTab() {
+  const [themes, setThemes] = useState<Theme[]>([])
+  const [loading, setLoading] = useState(true)
+  const [creating, setCreating] = useState(false)
+
+  const load = () => {
+    setLoading(true)
+    api
+      .get<Theme[]>('/api/admin/themes')
+      .then(setThemes)
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(load, [])
+
+  const handleActivate = async (id: string) => {
+    await api.patch(`/api/admin/themes/${id}/activate`, {})
+    load()
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this theme? This cannot be undone.')) return
+    await api.delete(`/api/admin/themes/${id}`)
+    load()
+  }
+
+  if (creating) {
+    return (
+      <ThemeForm
+        onCancel={() => setCreating(false)}
+        onSaved={() => {
+          setCreating(false)
+          load()
+        }}
+      />
+    )
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-[#1A1A1A]">Themes</h1>
+        <Button variant="primary" onClick={() => setCreating(true)}>
+          Create Theme
+        </Button>
+      </div>
+
+      <div className="mt-6 overflow-x-auto rounded-lg bg-white shadow-sm">
+        <table className="w-full min-w-[560px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-gray-100 text-xs uppercase tracking-wide text-[#8A8A8A]">
+              <th className="px-6 py-3 font-medium">Name</th>
+              <th className="px-6 py-3 font-medium">Status</th>
+              <th className="px-6 py-3 text-right font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={3} className="px-6 py-8 text-center text-[#8A8A8A]">
+                  Loading themes...
+                </td>
+              </tr>
+            ) : themes.length === 0 ? (
+              <tr>
+                <td colSpan={3} className="px-6 py-8 text-center text-[#8A8A8A]">
+                  No themes yet.
+                </td>
+              </tr>
+            ) : (
+              themes.map((t) => (
+                <tr key={t.id} className="border-b border-gray-100 last:border-0">
+                  <td className="px-6 py-4 font-medium text-[#1A1A1A]">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="h-4 w-4 shrink-0 rounded-full border border-gray-200"
+                        style={{ backgroundColor: t.primaryBg }}
+                      />
+                      {t.name}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    {t.isActive ? (
+                      <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700">
+                        Active
+                      </span>
+                    ) : (
+                      <span className="text-xs text-[#8A8A8A]">Inactive</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {!t.isActive && (
+                      <button
+                        type="button"
+                        className="mr-4 text-[#1A1A1A] hover:underline"
+                        onClick={() => handleActivate(t.id)}
+                      >
+                        Activate
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className="text-red-600 hover:underline"
+                      onClick={() => handleDelete(t.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function ThemeForm({ onCancel, onSaved }: { onCancel: () => void; onSaved: () => void }) {
+  const [name, setName] = useState('')
+  const [primaryBg, setPrimaryBg] = useState('#F7F4F0')
+  const [accentColor, setAccentColor] = useState('#D4A8A0')
+  const [heroText, setHeroText] = useState('')
+  const [announcementText, setAnnouncementText] = useState('')
+  const [heroBanner, setHeroBanner] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setSaving(true)
+    try {
+      await api.post('/api/admin/themes', {
+        name,
+        primaryBg,
+        accentColor,
+        heroText,
+        announcementText,
+        heroBanner,
+      })
+      onSaved()
+    } catch {
+      setError('Could not save this theme.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div>
+      <h1 className="text-2xl font-semibold text-[#1A1A1A]">Create Theme</h1>
+
+      <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-sm">
+          <FormField label="Theme Name" value={name} onChange={setName} required />
+
+          <div className="flex gap-6">
+            <label className="flex flex-1 flex-col gap-2">
+              <span className="label text-ink">Primary Background</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={primaryBg}
+                  onChange={(e) => setPrimaryBg(e.target.value)}
+                  className="h-10 w-14 cursor-pointer border border-border"
+                />
+                <span className="text-sm text-muted">{primaryBg}</span>
+              </div>
+            </label>
+            <label className="flex flex-1 flex-col gap-2">
+              <span className="label text-ink">Accent Color</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={accentColor}
+                  onChange={(e) => setAccentColor(e.target.value)}
+                  className="h-10 w-14 cursor-pointer border border-border"
+                />
+                <span className="text-sm text-muted">{accentColor}</span>
+              </div>
+            </label>
+          </div>
+
+          <FormField label="Hero Headline" value={heroText} onChange={setHeroText} required />
+          <FormField label="Announcement Bar Text" value={announcementText} onChange={setAnnouncementText} required />
+
+          <div>
+            <p className="label text-ink">Hero Banner Image</p>
+            <div className="mt-2">
+              <ImageUploader
+                images={heroBanner ? [heroBanner] : []}
+                onAdd={(url) => setHeroBanner(url)}
+                onRemove={() => setHeroBanner(null)}
+              />
+            </div>
+          </div>
+
+          {error && <p className="text-sm font-normal text-red-600">{error}</p>}
+
+          <div className="mt-2 flex gap-4">
+            <Button type="submit" variant="primary" disabled={saving}>
+              {saving ? 'Saving...' : 'Save Theme'}
+            </Button>
+            <Button type="button" variant="ghost" onClick={onCancel}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+
+        <div>
+          <p className="label mb-2 text-[#8A8A8A]">Live Preview</p>
+          <div
+            className="overflow-hidden rounded-lg border border-gray-200"
+            style={{
+              backgroundColor: primaryBg,
+              backgroundImage: heroBanner ? `url(${heroBanner})` : undefined,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <div className="bg-black/80 px-4 py-2 text-center text-[10px] font-medium uppercase tracking-[0.14em] text-white">
+              {announcementText || 'Announcement bar text...'}
+            </div>
+            <div className="flex min-h-[280px] flex-col items-start justify-center p-8">
+              <p className="max-w-sm text-2xl font-medium leading-tight sm:text-4xl" style={{ color: accentColor }}>
+                {heroText || 'Hero headline...'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function DashboardIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -612,6 +940,15 @@ function CustomersIcon({ className }: { className?: string }) {
       <path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6" />
       <circle cx="17" cy="8" r="2.5" />
       <path d="M17 14c2.8 0 5 2.2 5 6" />
+    </svg>
+  )
+}
+
+function ThemesIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M12 2a7 7 0 0 0-7 7c0 3 2 4 2 7a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2c0-3 2-4 2-7a7 7 0 0 0-7-7z" />
+      <path d="M9 21h6" />
     </svg>
   )
 }

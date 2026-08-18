@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import { WishlistProvider } from './context/WishlistContext'
@@ -19,34 +20,38 @@ import Admin from './pages/Admin'
 function App() {
   return (
     <BrowserRouter>
-      {/* AuthProvider wraps Cart/WishlistProvider because both call useAuth()
-          to decide whether to sync with the backend or keep guest-only local
-          state. */}
-      <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <Routes>
-              <Route element={<Layout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/order-confirmation" element={<OrderConfirmation />} />
-                <Route path="/size-guide" element={<SizeGuide />} />
-              </Route>
-              {/* Outside Layout - the admin dashboard has its own dark
-                  sidebar shell, not the storefront navbar/announcement
-                  bar/footer. */}
-              <Route path="/admin" element={<Admin />} />
-            </Routes>
-          </WishlistProvider>
-        </CartProvider>
-      </AuthProvider>
+      {/* ThemeProvider is outermost since it applies CSS custom properties
+          to document.documentElement as soon as the active theme loads,
+          independent of auth state. AuthProvider wraps Cart/WishlistProvider
+          because both call useAuth() to decide whether to sync with the
+          backend or keep guest-only local state. */}
+      <ThemeProvider>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Routes>
+                <Route element={<Layout />}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/account" element={<Account />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                  <Route path="/size-guide" element={<SizeGuide />} />
+                </Route>
+                {/* Outside Layout - the admin dashboard has its own dark
+                    sidebar shell, not the storefront navbar/announcement
+                    bar/footer. */}
+                <Route path="/admin" element={<Admin />} />
+              </Routes>
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }
