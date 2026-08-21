@@ -6,7 +6,7 @@ export interface Product {
   category: string
   price: number
   salePrice?: number
-  image: string
+  images: string[]
   tag: Tag
   sizes: string[]
   description: string

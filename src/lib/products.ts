@@ -25,7 +25,7 @@ export function mapApiProduct(p: ApiProduct): Product {
     category: p.category,
     price: p.price,
     salePrice: p.salePrice ?? undefined,
-    image: p.images[0] ?? '',
+    images: p.images,
     // The frontend only supports a single badge per product; a product is
     // only ever tagged "new" OR "sale" (not both), so isNew takes priority
     // since that's a merchandising choice (highlighting new arrivals) rather

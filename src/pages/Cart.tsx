@@ -33,7 +33,9 @@ export default function Cart() {
               return (
                 <div key={line.id} className="flex gap-5 py-6 first:pt-0">
                   <Link to={`/product/${product.id}`} className="h-28 w-24 shrink-0 overflow-hidden bg-hero">
-                    <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                    {product.images[0] && (
+                      <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
+                    )}
                   </Link>
 
                   <div className="flex flex-1 flex-col justify-between">

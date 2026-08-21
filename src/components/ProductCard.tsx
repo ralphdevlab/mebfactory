@@ -5,10 +5,12 @@ import WishlistButton from './WishlistButton'
 
 export default function ProductCard({ product }: { product: Product }) {
   const onSale = product.salePrice !== undefined
+  const image = product.images[0]
 
   return (
     <Link to={`/product/${product.id}`} className="group block">
       <div className="relative aspect-[3/4] overflow-hidden rounded-[6px] bg-hero">
+        {image && <img src={image} alt={product.name} className="h-full w-full object-cover" />}
         <ProductTag tag={product.tag} />
         <WishlistButton
           product={product}

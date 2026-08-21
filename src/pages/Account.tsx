@@ -212,7 +212,9 @@ function WishlistTab() {
       {lines.map((line) => (
         <div key={line.id} className="flex items-center gap-4 py-6 first:pt-0">
           <Link to={`/product/${line.product.id}`} className="h-20 w-16 shrink-0 overflow-hidden bg-hero">
-            <img src={line.product.image} alt={line.product.name} className="h-full w-full object-cover" />
+            {line.product.images[0] && (
+              <img src={line.product.images[0]} alt={line.product.name} className="h-full w-full object-cover" />
+            )}
           </Link>
           <div className="flex-1">
             <p className="label text-muted">{line.product.category}</p>

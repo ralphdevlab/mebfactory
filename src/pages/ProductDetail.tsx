@@ -16,6 +16,7 @@ export default function ProductDetail() {
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [added, setAdded] = useState(false)
+  const [activeImage, setActiveImage] = useState(0)
 
   useEffect(() => {
     if (!id) {
@@ -23,6 +24,7 @@ export default function ProductDetail() {
       return
     }
     setLoading(true)
+    setActiveImage(0)
     fetchProduct(id)
       .then(setProduct)
       .catch(() => setProduct(null))
@@ -68,8 +70,35 @@ export default function ProductDetail() {
       </button>
 
       <div className="mt-6 grid grid-cols-1 gap-12 lg:grid-cols-2">
-        <div className="relative aspect-[3/4] w-full overflow-hidden bg-hero">
-          <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+        <div>
+          <div className="relative aspect-[3/4] w-full overflow-hidden bg-hero">
+            {product.images[activeImage] && (
+              <img
+                src={product.images[activeImage]}
+                alt={product.name}
+                className="h-full w-full object-cover"
+              />
+            )}
+          </div>
+
+          {product.images.length > 1 && (
+            <div className="mt-3 flex gap-3">
+              {product.images.map((image, index) => (
+                <button
+                  key={image}
+                  type="button"
+                  onClick={() => setActiveImage(index)}
+                  aria-label={`Show image ${index + 1}`}
+                  aria-pressed={index === activeImage}
+                  className={`relative h-20 w-16 shrink-0 overflow-hidden bg-hero transition-opacity ${
+                    index === activeImage ? 'opacity-100 ring-1 ring-charcoal' : 'opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <img src={image} alt="" className="h-full w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="max-w-md">
