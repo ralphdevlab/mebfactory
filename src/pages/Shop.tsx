@@ -1,153 +1,141 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/ProductCardSkeleton'
 import { fetchProducts } from '../lib/products'
 import type { Product } from '../types'
 
+type Chip = 'ALL' | 'NEW IN' | 'SALE' | 'WOMAN' | 'MAN'
+const CHIPS: Chip[] = ['ALL', 'NEW IN', 'SALE', 'WOMAN', 'MAN']
+
+type Sort = 'new' | 'price-asc' | 'price-desc'
+const SORTS: { value: Sort; label: string }[] = [
+  { value: 'new', label: 'New in' },
+  { value: 'price-asc', label: 'Price: low to high' },
+  { value: 'price-desc', label: 'Price: high to low' },
+]
+
 export default function Shop() {
   const [searchParams] = useSearchParams()
-  const initialCategory = searchParams.get('category') ?? ''
-  const initialNew = searchParams.get('new') === 'true'
-  const initialSale = searchParams.get('sale') === 'true'
+  const urlCategory = searchParams.get('category')?.toLowerCase() ?? ''
+  const urlNew = searchParams.get('new') === 'true'
+  const urlSale = searchParams.get('sale') === 'true'
+
+  const initialChip: Chip = urlNew
+    ? 'NEW IN'
+    : urlSale
+      ? 'SALE'
+      : urlCategory === 'woman'
+        ? 'WOMAN'
+        : urlCategory === 'man'
+          ? 'MAN'
+          : 'ALL'
+
+  // A `?category=` that isn't woman/man (e.g. from the mega menu) still
+  // filters the list even though it has no dedicated chip.
+  const extraCategory = urlCategory && !['woman', 'man'].includes(urlCategory) ? urlCategory : ''
 
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [chip, setChip] = useState<Chip>(initialChip)
+  const [sort, setSort] = useState<Sort>('new')
 
-  const [activeCategories, setActiveCategories] = useState<string[]>(
-    initialCategory ? [initialCategory] : [],
-  )
-  const [activeSizes, setActiveSizes] = useState<string[]>([])
-  const [saleOnly, setSaleOnly] = useState(initialSale)
-  const [newOnly, setNewOnly] = useState(initialNew)
-
-  // Only the initial `?category=` from the URL is sent to the API - the
-  // backend's GET /api/products only supports a single `category` (and
-  // `new`) query param, not the multi-select category/size/sale filtering
-  // this page offers, so everything past that first load is filtered
-  // client-side against whatever the API returned, same as it always was.
-  // Deliberately runs once on mount, not on every `initialCategory` change:
-  // this component already treats every URL param (category, new, sale) as an
-  // initial value only, the same way the size/sale/new filter state below
-  // does - re-fetching on later URL changes without also resetting those
-  // filter checkboxes would leave the checkboxes and the fetched list out
-  // of sync with each other.
+  // The backend's GET /api/products only understands a single `category` (and
+  // `new`) query param, so — exactly as before — only the initial URL params
+  // are sent to the API and everything after is filtered client-side. Runs
+  // once on mount.
   useEffect(() => {
     setLoading(true)
     const params =
-      initialCategory || initialNew
-        ? { ...(initialCategory ? { category: initialCategory } : {}), ...(initialNew ? { isNew: true } : {}) }
+      urlCategory || urlNew
+        ? { ...(urlCategory ? { category: urlCategory } : {}), ...(urlNew ? { isNew: true } : {}) }
         : undefined
     fetchProducts(params)
       .then(setProducts)
       .finally(() => setLoading(false))
   }, [])
 
-  const CATEGORIES = useMemo(() => Array.from(new Set(products.map((p) => p.category))).sort(), [products])
-  const SIZES = useMemo(() => Array.from(new Set(products.flatMap((p) => p.sizes))).sort(), [products])
-
-  const toggle = (value: string, list: string[], setList: (v: string[]) => void) => {
-    setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value])
-  }
-
   const filtered = useMemo(() => {
-    return products.filter((p) => {
-      if (activeCategories.length && !activeCategories.includes(p.category)) return false
-      if (activeSizes.length && !p.sizes.some((s) => activeSizes.includes(s))) return false
-      if (saleOnly && p.tag !== 'sale') return false
-      if (newOnly && p.tag !== 'new') return false
+    let list = products.filter((p) => {
+      if (extraCategory && !p.category.toLowerCase().includes(extraCategory)) return false
+      if (chip === 'NEW IN') return p.tag === 'new'
+      if (chip === 'SALE') return p.tag === 'sale'
+      if (chip === 'WOMAN') return p.category.toLowerCase().includes('woman')
+      if (chip === 'MAN') return p.category.toLowerCase().includes('man')
       return true
     })
-  }, [products, activeCategories, activeSizes, saleOnly, newOnly])
+    const price = (p: Product) => p.salePrice ?? p.price
+    if (sort === 'price-asc') list = [...list].sort((a, b) => price(a) - price(b))
+    if (sort === 'price-desc') list = [...list].sort((a, b) => price(b) - price(a))
+    return list
+  }, [products, chip, sort, extraCategory])
+
+  const heading =
+    chip === 'WOMAN'
+      ? 'WOMAN'
+      : chip === 'MAN'
+        ? 'MAN'
+        : extraCategory
+          ? extraCategory.toUpperCase()
+          : 'ALL PRODUCTS'
 
   return (
-    <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <div className="flex items-center justify-between border-b border-border pb-6">
-        <h1 className="text-2xl font-medium text-ink">Shop All</h1>
-        <p className="label text-muted">{loading ? '...' : `${filtered.length} Items`}</p>
+    <div className="bg-white">
+      <div className="flex items-baseline justify-between p-6">
+        <h1 className="text-[28px] font-bold uppercase text-[#0A0A0A]">{heading}</h1>
+        <p className="text-[13px] text-muted">{loading ? '…' : `${filtered.length} products`}</p>
       </div>
 
-      <div className="mt-10 flex flex-col gap-10 lg:flex-row">
-        <aside className="w-full shrink-0 lg:w-56">
-          <FilterGroup title="Category">
-            {CATEGORIES.map((category) => (
-              <FilterCheckbox
-                key={category}
-                label={category}
-                checked={activeCategories.includes(category)}
-                onChange={() => toggle(category, activeCategories, setActiveCategories)}
-              />
-            ))}
-          </FilterGroup>
-
-          <FilterGroup title="Size">
-            {SIZES.map((size) => (
-              <FilterCheckbox
-                key={size}
-                label={size}
-                checked={activeSizes.includes(size)}
-                onChange={() => toggle(size, activeSizes, setActiveSizes)}
-              />
-            ))}
-          </FilterGroup>
-
-          <FilterGroup title="Discount">
-            <FilterCheckbox label="Sale Only" checked={saleOnly} onChange={() => setSaleOnly((v) => !v)} />
-            <FilterCheckbox label="New Only" checked={newOnly} onChange={() => setNewOnly((v) => !v)} />
-          </FilterGroup>
-        </aside>
-
-        <div className="flex-1">
-          {loading ? (
-            <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <ProductCardSkeleton key={i} />
-              ))}
-            </div>
-          ) : filtered.length === 0 ? (
-            <p className="py-20 text-center text-sm font-normal text-muted">
-              No products match the selected filters.
-            </p>
-          ) : (
-            <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3">
-              {filtered.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
+      <div className="sticky top-14 z-30 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-white px-6 py-3">
+        <div className="flex flex-wrap gap-2">
+          {CHIPS.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setChip(c)}
+              className={`border px-3.5 py-1.5 text-[11px] uppercase tracking-[0.1em] transition-colors ${
+                chip === c
+                  ? 'border-[#0A0A0A] bg-[#0A0A0A] text-white'
+                  : 'border-border bg-white text-ink hover:border-[#0A0A0A]'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
         </div>
+
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value as Sort)}
+          className="border border-border bg-white px-3 py-1.5 text-[12px] text-ink focus:outline-none"
+        >
+          {SORTS.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
+          ))}
+        </select>
       </div>
-    </div>
-  )
-}
 
-function FilterGroup({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div className="border-b border-border py-6 first:pt-0">
-      <p className="label text-ink">{title}</p>
-      <div className="mt-4 flex flex-col gap-3">{children}</div>
+      {loading ? (
+        <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="bg-white p-2">
+              <ProductCardSkeleton />
+            </div>
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
+        <p className="py-20 text-center text-sm text-muted">No products match the selected filters.</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+          {filtered.map((product) => (
+            <div key={product.id} className="bg-white">
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  )
-}
-
-function FilterCheckbox({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string
-  checked: boolean
-  onChange: () => void
-}) {
-  return (
-    <label className="flex cursor-pointer items-center gap-3">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-        className="h-4 w-4 shrink-0 accent-ink"
-      />
-      <span className="text-sm font-normal text-ink">{label}</span>
-    </label>
   )
 }
