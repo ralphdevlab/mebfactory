@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import { WishlistProvider } from './context/WishlistContext'
 import Layout from './components/Layout'
+import WIPBanner from './components/WIPBanner'
 import Home from './pages/Home'
 import Shop from './pages/Shop'
 import ProductDetail from './pages/ProductDetail'
@@ -15,6 +16,7 @@ import Contact from './pages/Contact'
 import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
 import SizeGuide from './pages/SizeGuide'
+import Changelog from './pages/Changelog'
 import Admin from './pages/Admin'
 
 function App() {
@@ -29,6 +31,9 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
+              {/* Rendered outside the Layout <Routes> so the banner is
+                  present on every route, including the admin dashboard. */}
+              <WIPBanner />
               <Routes>
                 <Route element={<Layout />}>
                   <Route path="/" element={<Home />} />
@@ -42,6 +47,7 @@ function App() {
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/order-confirmation" element={<OrderConfirmation />} />
                   <Route path="/size-guide" element={<SizeGuide />} />
+                  <Route path="/changelog" element={<Changelog />} />
                 </Route>
                 {/* Outside Layout - the admin dashboard has its own dark
                     sidebar shell, not the storefront navbar/announcement

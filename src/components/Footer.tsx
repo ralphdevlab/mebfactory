@@ -16,6 +16,7 @@ const FOOTER_COLUMNS = [
       { label: 'Our Story', to: '/shop' },
       { label: 'Sustainability', to: '/shop' },
       { label: 'Careers', to: '/shop' },
+      { label: 'Build Log', to: '/changelog' },
     ],
   },
   {
