@@ -12,7 +12,7 @@ export default function Layout() {
   const showTrustStrip = TRUST_STRIP_PATHS.some((re) => re.test(pathname))
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-white pb-[44px]">
       <AnnouncementBar />
       <Navbar />
       <main className="flex-1">
