@@ -7,7 +7,7 @@ export interface NavItem {
   to: string
 }
 
-const cat = (label: string): NavItem => {
+export const cat = (label: string): NavItem => {
   const key = label.toLowerCase()
   if (key === 'new in') return { label, to: '/shop?new=true' }
   if (key === 'sale') return { label, to: '/shop?sale=true' }

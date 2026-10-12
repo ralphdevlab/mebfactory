@@ -5,14 +5,14 @@ import ProductCardSkeleton from '../components/ProductCardSkeleton'
 import { fetchProducts } from '../lib/products'
 import type { Product } from '../types'
 
-type Chip = 'ALL' | 'NEW IN' | 'SALE' | 'WOMAN' | 'MAN'
-const CHIPS: Chip[] = ['ALL', 'NEW IN', 'SALE', 'WOMAN', 'MAN']
+type Chip = 'ALL' | 'NEW IN' | 'SALE' | 'WOMAN' | 'MAN' | 'TOPS' | 'BOTTOMS' | 'OUTERWEAR'
+const CHIPS: Chip[] = ['ALL', 'NEW IN', 'SALE', 'WOMAN', 'MAN', 'TOPS', 'BOTTOMS', 'OUTERWEAR']
 
 type Sort = 'new' | 'price-asc' | 'price-desc'
 const SORTS: { value: Sort; label: string }[] = [
   { value: 'new', label: 'New in' },
-  { value: 'price-asc', label: 'Price: low to high' },
-  { value: 'price-desc', label: 'Price: high to low' },
+  { value: 'price-asc', label: 'Price ↑' },
+  { value: 'price-desc', label: 'Price ↓' },
 ]
 
 export default function Shop() {
@@ -29,11 +29,18 @@ export default function Shop() {
         ? 'WOMAN'
         : urlCategory === 'man'
           ? 'MAN'
-          : 'ALL'
+          : urlCategory === 'tops'
+            ? 'TOPS'
+            : urlCategory === 'bottoms'
+              ? 'BOTTOMS'
+              : urlCategory === 'outerwear'
+                ? 'OUTERWEAR'
+                : 'ALL'
 
-  // A `?category=` that isn't woman/man (e.g. from the mega menu) still
-  // filters the list even though it has no dedicated chip.
-  const extraCategory = urlCategory && !['woman', 'man'].includes(urlCategory) ? urlCategory : ''
+  // A `?category=` that isn't one of the chips above (e.g. from the mega
+  // menu) still filters the list even though it has no dedicated chip.
+  const extraCategory =
+    urlCategory && !['woman', 'man', 'tops', 'bottoms', 'outerwear'].includes(urlCategory) ? urlCategory : ''
 
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -62,6 +69,9 @@ export default function Shop() {
       if (chip === 'SALE') return p.tag === 'sale'
       if (chip === 'WOMAN') return p.category.toLowerCase().includes('woman')
       if (chip === 'MAN') return p.category.toLowerCase().includes('man')
+      if (chip === 'TOPS') return p.category.toLowerCase().includes('top')
+      if (chip === 'BOTTOMS') return p.category.toLowerCase().includes('bottom')
+      if (chip === 'OUTERWEAR') return p.category.toLowerCase().includes('outerwear')
       return true
     })
     const price = (p: Product) => p.salePrice ?? p.price
@@ -70,59 +80,48 @@ export default function Shop() {
     return list
   }, [products, chip, sort, extraCategory])
 
-  const heading =
-    chip === 'WOMAN'
-      ? 'WOMAN'
-      : chip === 'MAN'
-        ? 'MAN'
-        : extraCategory
-          ? extraCategory.toUpperCase()
-          : 'ALL PRODUCTS'
-
   return (
     <div className="bg-white">
-      <div className="flex items-baseline justify-between p-6">
-        <h1 className="text-[28px] font-bold uppercase text-[#0A0A0A]">{heading}</h1>
-        <p className="text-[13px] text-muted">{loading ? '…' : `${filtered.length} products`}</p>
-      </div>
+      <div className="sticky top-[52px] z-30 border-b border-border bg-white md:top-[60px]">
+        <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-6">
+          <div className="scrollbar-hide flex flex-1 gap-2 overflow-x-auto">
+            {CHIPS.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setChip(c)}
+                className={`shrink-0 whitespace-nowrap border px-3.5 py-2 text-[11px] uppercase tracking-[0.08em] transition-colors ${
+                  chip === c
+                    ? 'border-ink bg-ink text-white'
+                    : 'border-border bg-white text-ink hover:border-ink'
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
 
-      <div className="sticky top-14 z-30 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-white px-6 py-3">
-        <div className="flex flex-wrap gap-2">
-          {CHIPS.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setChip(c)}
-              className={`border px-3.5 py-1.5 text-[11px] uppercase tracking-[0.1em] transition-colors ${
-                chip === c
-                  ? 'border-[#0A0A0A] bg-[#0A0A0A] text-white'
-                  : 'border-border bg-white text-ink hover:border-[#0A0A0A]'
-              }`}
-            >
-              {c}
-            </button>
-          ))}
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as Sort)}
+            className="shrink-0 border border-border bg-white px-2 py-2 text-[12px] text-ink focus:outline-none"
+          >
+            {SORTS.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
         </div>
-
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value as Sort)}
-          className="border border-border bg-white px-3 py-1.5 text-[12px] text-ink focus:outline-none"
-        >
-          {SORTS.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </select>
+        <p className="px-4 pb-3 text-[12px] text-muted md:px-6">
+          {loading ? '…' : `${filtered.length} products`}
+        </p>
       </div>
 
       {loading ? (
         <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-white p-2">
-              <ProductCardSkeleton />
-            </div>
+            <ProductCardSkeleton key={i} />
           ))}
         </div>
       ) : filtered.length === 0 ? (
@@ -130,9 +129,7 @@ export default function Shop() {
       ) : (
         <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
           {filtered.map((product) => (
-            <div key={product.id} className="bg-white">
-              <ProductCard product={product} />
-            </div>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
