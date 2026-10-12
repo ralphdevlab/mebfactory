@@ -5,10 +5,11 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   try {
-    const { category, new: isNew, search } = req.query;
+    const { category, collection, new: isNew, search } = req.query;
 
     const where: Record<string, unknown> = {};
     if (category) where.category = String(category);
+    if (collection) where.collection = String(collection);
     if (isNew === "true") where.isNew = true;
     if (search) {
       const term = String(search);

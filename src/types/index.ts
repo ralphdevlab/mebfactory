@@ -4,6 +4,9 @@ export interface Product {
   id: string
   name: string
   category: string
+  // Lowercase collection slug (e.g. "uf", "fsu") for the college capsule
+  // collections; undefined for the regular catalog.
+  collection?: string
   price: number
   salePrice?: number
   images: string[]

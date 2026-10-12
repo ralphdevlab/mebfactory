@@ -12,6 +12,9 @@ export interface ApiProduct {
   price: number
   salePrice: number | null
   category: string
+  // Lowercase collection slug (e.g. "uf", "fsu") for the college capsule
+  // collections; null for the regular catalog.
+  collection: string | null
   sizes: string[]
   images: string[]
   isNew: boolean
@@ -23,6 +26,7 @@ export function mapApiProduct(p: ApiProduct): Product {
     id: p.id,
     name: p.name,
     category: p.category,
+    collection: p.collection ?? undefined,
     price: p.price,
     salePrice: p.salePrice ?? undefined,
     images: p.images,
@@ -38,11 +42,13 @@ export function mapApiProduct(p: ApiProduct): Product {
 
 export async function fetchProducts(params?: {
   category?: string
+  collection?: string
   isNew?: boolean
   search?: string
 }): Promise<Product[]> {
   const query = new URLSearchParams()
   if (params?.category) query.set('category', params.category)
+  if (params?.collection) query.set('collection', params.collection)
   if (params?.isNew) query.set('new', 'true')
   if (params?.search) query.set('search', params.search)
   const qs = query.toString()

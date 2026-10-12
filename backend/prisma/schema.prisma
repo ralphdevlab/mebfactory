@@ -26,6 +26,9 @@ model Product {
   price       Float
   salePrice   Float?
   category    String
+  // Lowercase collection slug (e.g. "uf", "fsu") for the college-inspired
+  // capsule collections; null for the regular (non-collection) catalog.
+  collection  String?
   sizes       String[]
   images      String[] @default([])
   isNew       Boolean  @default(false)

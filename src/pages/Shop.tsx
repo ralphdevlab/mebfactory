@@ -18,6 +18,7 @@ const SORTS: { value: Sort; label: string }[] = [
 export default function Shop() {
   const [searchParams] = useSearchParams()
   const urlCategory = searchParams.get('category')?.toLowerCase() ?? ''
+  const urlCollection = searchParams.get('collection')?.toLowerCase() ?? ''
   const urlNew = searchParams.get('new') === 'true'
   const urlSale = searchParams.get('sale') === 'true'
 
@@ -47,15 +48,19 @@ export default function Shop() {
   const [chip, setChip] = useState<Chip>(initialChip)
   const [sort, setSort] = useState<Sort>('new')
 
-  // The backend's GET /api/products only understands a single `category` (and
-  // `new`) query param, so — exactly as before — only the initial URL params
-  // are sent to the API and everything after is filtered client-side. Runs
-  // once on mount.
+  // The backend's GET /api/products only understands a single `category`,
+  // `collection` and `new` query param, so — exactly as before — only the
+  // initial URL params are sent to the API and everything after is filtered
+  // client-side. Runs once on mount.
   useEffect(() => {
     setLoading(true)
     const params =
-      urlCategory || urlNew
-        ? { ...(urlCategory ? { category: urlCategory } : {}), ...(urlNew ? { isNew: true } : {}) }
+      urlCategory || urlCollection || urlNew
+        ? {
+            ...(urlCategory ? { category: urlCategory } : {}),
+            ...(urlCollection ? { collection: urlCollection } : {}),
+            ...(urlNew ? { isNew: true } : {}),
+          }
         : undefined
     fetchProducts(params)
       .then(setProducts)
