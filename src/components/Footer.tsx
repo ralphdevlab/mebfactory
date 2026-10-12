@@ -2,6 +2,15 @@ import { Link } from 'react-router-dom'
 
 const FOOTER_COLUMNS = [
   {
+    heading: 'SHOP',
+    links: [
+      { label: 'New Arrivals', to: '/shop?new=true' },
+      { label: 'Woman', to: '/shop?category=woman' },
+      { label: 'Man', to: '/shop?category=man' },
+      { label: 'Sale', to: '/shop?sale=true' },
+    ],
+  },
+  {
     heading: 'HELP',
     links: [
       { label: 'Shipping', to: '/shop' },
@@ -16,15 +25,6 @@ const FOOTER_COLUMNS = [
       { label: 'Our Story', to: '/shop' },
       { label: 'Sustainability', to: '/shop' },
       { label: 'Careers', to: '/shop' },
-      { label: 'Build Log', to: '/changelog' },
-    ],
-  },
-  {
-    heading: 'FOLLOW US',
-    links: [
-      { label: 'Instagram', to: '/shop' },
-      { label: 'TikTok', to: '/shop' },
-      { label: 'Pinterest', to: '/shop' },
     ],
   },
   {
@@ -40,10 +40,16 @@ const FOOTER_COLUMNS = [
 export default function Footer() {
   return (
     <footer className="border-t border-border bg-white">
-      <div className="grid grid-cols-2 gap-6 px-6 pb-6 pt-12 md:grid-cols-4">
+      <div className="px-4 pt-10 md:px-6">
+        <Link to="/" className="text-[16px] font-bold tracking-[0.14em] text-ink">
+          MEBFACTORY
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-2 gap-8 px-4 py-8 md:grid-cols-4 md:px-6">
         {FOOTER_COLUMNS.map((col) => (
           <div key={col.heading}>
-            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em] text-[#0A0A0A]">
+            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em] text-ink">
               {col.heading}
             </p>
             <ul className="flex flex-col gap-3">
@@ -51,7 +57,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-[12px] uppercase tracking-[0.08em] text-muted hover:text-[#0A0A0A]"
+                    className="block min-h-[20px] text-[12px] uppercase tracking-[0.04em] text-muted hover:text-ink"
                   >
                     {link.label}
                   </Link>
@@ -63,8 +69,8 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-border">
-        <div className="flex flex-col gap-2 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[10px] text-muted">© 2026 MEBFACTORY. ALL RIGHTS RESERVED.</p>
+        <div className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between md:px-6">
+          <p className="text-[10px] text-muted">© 2026 MEBFACTORY</p>
           <p className="text-[10px] tracking-[0.1em] text-muted">VISA MASTERCARD AMEX</p>
         </div>
       </div>

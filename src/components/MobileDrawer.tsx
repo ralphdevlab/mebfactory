@@ -1,17 +1,28 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 import {
   MAN_SUBCATEGORIES,
   WOMAN_SUBCATEGORIES,
   type NavItem,
 } from '../data/nav'
+import { ChevronIcon, CloseIcon, SearchIcon } from './icons'
 
 // Off-canvas navigation for the mobile navbar's hamburger. Always mounted so
 // the slide transition runs both ways; `open` drives the transform and the
 // overlay.
-export default function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function MobileDrawer({
+  open,
+  onClose,
+  onOpenSearch,
+}: {
+  open: boolean
+  onClose: () => void
+  onOpenSearch: () => void
+}) {
   const { user } = useAuth()
+  const { itemCount } = useCart()
   const [expanded, setExpanded] = useState<'woman' | 'man' | null>(null)
 
   const close = () => {
@@ -29,22 +40,32 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
       />
 
       <div
-        className={`fixed left-0 top-0 z-[100] h-screen w-[80vw] max-w-[320px] bg-white transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed left-0 top-0 z-[100] h-screen w-[82vw] max-w-[340px] bg-white transition-transform duration-300 ease-in-out md:hidden ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
-          <Link to="/" onClick={close} className="text-[18px] font-bold text-ink">
-            MEBFACTORY
-          </Link>
-          <button type="button" onClick={close} aria-label="Close menu" className="text-ink">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
+        <div className="flex h-[52px] items-center justify-between border-b border-border px-4">
+          <span className="text-[16px] font-bold tracking-[0.14em] text-ink">MEBFACTORY</span>
+          <button
+            type="button"
+            onClick={close}
+            aria-label="Close menu"
+            className="flex h-11 w-11 items-center justify-center text-ink"
+          >
+            <CloseIcon size={20} />
           </button>
         </div>
 
-        <nav className="h-[calc(100vh-57px)] overflow-y-auto">
+        <nav className="flex h-[calc(100vh-52px)] flex-col overflow-y-auto">
+          <button
+            type="button"
+            onClick={onOpenSearch}
+            className="flex min-h-[44px] items-center gap-3 border-b border-border px-6 py-4 text-left text-[13px] uppercase tracking-[0.08em] text-muted"
+          >
+            <SearchIcon size={16} />
+            Search
+          </button>
+
           <ExpandableRow
             label="WOMAN"
             open={expanded === 'woman'}
@@ -63,10 +84,15 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
           <DrawerLink to="/shop?new=true" onClick={close}>NEW IN</DrawerLink>
           <DrawerLink to="/shop?sale=true" onClick={close}>SALE</DrawerLink>
 
-          <div className="my-2 border-t border-border" />
-
-          <DrawerLink to={user ? '/account' : '/login'} onClick={close}>My Account</DrawerLink>
-          <DrawerLink to={user ? '/account?tab=wishlist' : '/login'} onClick={close}>Wishlist</DrawerLink>
+          <div className="mt-auto border-t border-border">
+            <DrawerLink to={user ? '/account' : '/login'} onClick={close} compact>My Account</DrawerLink>
+            <DrawerLink to={user ? '/account?tab=wishlist' : '/login'} onClick={close} compact>
+              Wishlist
+            </DrawerLink>
+            <DrawerLink to="/cart" onClick={close} compact>
+              Cart{itemCount > 0 ? ` (${itemCount})` : ''}
+            </DrawerLink>
+          </div>
         </nav>
       </div>
     </>
@@ -87,24 +113,14 @@ function ExpandableRow({
   onNavigate: () => void
 }) {
   return (
-    <div className="border-b border-[#F5F4F2]">
+    <div className="border-b border-border">
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between px-6 py-4 text-[14px] font-medium uppercase text-ink"
+        className="flex min-h-[44px] w-full items-center justify-between px-6 py-4 text-[15px] font-bold uppercase tracking-[0.04em] text-ink"
       >
         {label}
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          className={`transition-transform ${open ? 'rotate-90' : ''}`}
-        >
-          <path d="M9 6l6 6-6 6" />
-        </svg>
+        <ChevronIcon size={16} className={`transition-transform ${open ? 'rotate-90' : ''}`} />
       </button>
       {open && (
         <div className="pb-2">
@@ -113,7 +129,7 @@ function ExpandableRow({
               key={item.label}
               to={item.to}
               onClick={onNavigate}
-              className="block py-2.5 pl-10 pr-6 text-[13px] text-muted"
+              className="block min-h-[44px] py-2.5 pl-10 pr-6 text-[13px] text-muted"
             >
               {item.label}
             </Link>
@@ -124,12 +140,24 @@ function ExpandableRow({
   )
 }
 
-function DrawerLink({ to, onClick, children }: { to: string; onClick: () => void; children: ReactNode }) {
+function DrawerLink({
+  to,
+  onClick,
+  children,
+  compact = false,
+}: {
+  to: string
+  onClick: () => void
+  children: ReactNode
+  compact?: boolean
+}) {
   return (
     <Link
       to={to}
       onClick={onClick}
-      className="block border-b border-[#F5F4F2] px-6 py-4 text-[14px] font-medium uppercase text-ink"
+      className={`block min-h-[44px] border-b border-border px-6 py-4 uppercase text-ink ${
+        compact ? 'text-[13px] font-medium tracking-[0.06em]' : 'text-[15px] font-bold tracking-[0.04em]'
+      }`}
     >
       {children}
     </Link>

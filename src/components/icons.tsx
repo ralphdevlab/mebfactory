@@ -57,6 +57,71 @@ export function ReceiptIcon({ size = 40, className = '' }: IconProps) {
   )
 }
 
+export function AccountIcon({ size = 40, className = '' }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className={className}
+    >
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+    </svg>
+  )
+}
+
+export function CloseIcon({ size = 40, className = '' }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className={className}
+    >
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  )
+}
+
+export function MenuIcon({ size = 40, className = '' }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className={className}
+    >
+      <path d="M3 6h18M3 12h18M3 18h18" />
+    </svg>
+  )
+}
+
+export function ChevronIcon({ size = 40, className = '' }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      className={className}
+    >
+      <path d="M9 6l6 6-6 6" />
+    </svg>
+  )
+}
+
 export function SearchIcon({ size = 40, className = '' }: IconProps) {
   return (
     <svg

@@ -20,29 +20,30 @@ export default function Cart() {
   }
 
   return (
-    <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <h1 className="border-b border-border pb-6 text-2xl font-medium text-ink">Shopping Cart</h1>
+    <div className="pb-24 md:mx-auto md:max-w-[1440px] md:px-6 md:py-12 md:pb-12">
+      <h1 className="border-b border-border px-4 py-5 text-[18px] font-bold uppercase text-ink md:px-0 md:pb-6 md:pt-0 md:text-2xl">
+        Shopping Cart
+      </h1>
 
-      <div className="mt-10 flex flex-col gap-12 lg:flex-row">
+      <div className="flex flex-col gap-12 md:mt-10 md:flex-row">
         <div className="flex-1">
-          <div className="flex flex-col divide-y divide-border">
+          <div className="flex flex-col divide-y divide-border px-4 md:px-0">
             {lines.map((line) => {
               const product = line.product
               const price = product.salePrice ?? product.price
 
               return (
-                <div key={line.id} className="flex gap-5 py-6 first:pt-0">
-                  <Link to={`/product/${product.id}`} className="h-28 w-24 shrink-0 overflow-hidden bg-hero">
+                <div key={line.id} className="flex gap-4 py-5">
+                  <Link to={`/product/${product.id}`} className="h-20 w-20 shrink-0 overflow-hidden bg-hero">
                     {product.images[0] && (
-                      <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
+                      <img src={product.images[0]} alt={product.name} loading="lazy" className="h-full w-full object-cover" />
                     )}
                   </Link>
 
                   <div className="flex flex-1 flex-col justify-between">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="label text-muted">{product.category}</p>
-                        <Link to={`/product/${product.id}`} className="mt-1 block text-sm font-normal text-ink">
+                        <Link to={`/product/${product.id}`} className="block text-sm font-medium uppercase text-ink">
                           {product.name}
                         </Link>
                         <p className="mt-1 text-xs font-normal text-muted">Size: {line.size}</p>
@@ -55,7 +56,7 @@ export default function Cart() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(line.id, line.quantity - 1)}
-                          className="flex h-8 w-8 items-center justify-center text-ink hover:bg-hero"
+                          className="flex h-9 w-9 items-center justify-center text-ink hover:bg-hero"
                           aria-label="Decrease quantity"
                         >
                           −
@@ -64,7 +65,7 @@ export default function Cart() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(line.id, line.quantity + 1)}
-                          className="flex h-8 w-8 items-center justify-center text-ink hover:bg-hero"
+                          className="flex h-9 w-9 items-center justify-center text-ink hover:bg-hero"
                           aria-label="Increase quantity"
                         >
                           +
@@ -74,7 +75,7 @@ export default function Cart() {
                       <button
                         type="button"
                         onClick={() => removeFromCart(line.id)}
-                        className="label text-muted hover:text-ink"
+                        className="label flex min-h-11 items-center text-muted hover:text-ink"
                       >
                         Remove
                       </button>
@@ -86,7 +87,8 @@ export default function Cart() {
           </div>
         </div>
 
-        <div className="w-full shrink-0 border border-border bg-surface p-6 lg:w-80">
+        {/* Order summary - desktop only; mobile uses the sticky bottom bar instead */}
+        <div className="hidden w-full shrink-0 border border-border bg-surface p-6 md:block md:w-80">
           <p className="label text-ink">Order Summary</p>
           <div className="mt-4 flex items-center justify-between">
             <p className="text-sm font-normal text-muted">Subtotal</p>
@@ -106,6 +108,21 @@ export default function Cart() {
             </Button>
           </Link>
         </div>
+      </div>
+
+      {/* Sticky checkout bar - mobile only */}
+      <div className="fixed inset-x-0 bottom-[44px] z-40 flex items-center gap-4 border-t border-border bg-white px-4 py-3 md:hidden">
+        <p className="text-sm font-medium text-ink">
+          Subtotal<span className="ml-2 text-base font-bold">${subtotal}</span>
+        </p>
+        <Link to="/checkout" className="ml-auto flex-1">
+          <button
+            type="button"
+            className="flex h-12 w-full items-center justify-center bg-ink text-[13px] uppercase tracking-[0.1em] text-white"
+          >
+            Checkout
+          </button>
+        </Link>
       </div>
     </div>
   )

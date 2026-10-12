@@ -7,7 +7,7 @@ export default function ProductTag({ tag }: { tag: Tag }) {
 
   return (
     <span
-      className={`label absolute left-3 top-3 rounded-[3px] px-2 py-1 text-[10px] ${
+      className={`absolute left-0 top-0 px-2 py-[3px] text-[9px] font-medium uppercase tracking-[0.06em] ${
         isSale ? 'bg-sand text-ink' : 'bg-charcoal text-surface'
       }`}
     >
