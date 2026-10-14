@@ -67,15 +67,22 @@ export default function SchoolSelectorModal({ open, onClose }: { open: boolean; 
     onClose()
   }
 
-  // "Browse All" is an explicit "take me to the shop" action (unlike
-  // dismissing via Escape/overlay click, which just closes the popup and
-  // leaves the shopper where they were) - works the same whether the modal
-  // opened on first visit or via "Change school".
+  // "Browse All" is an explicit reset: clear the pick (and the "seen"
+  // flag, so a fresh visit asks again rather than silently staying
+  // unfiltered) and land back on the homepage with no school filter -
+  // works the same whether the modal opened on first visit or via
+  // "Change school". Deliberately stays on "/" rather than going to
+  // /shop.
   function browseAll() {
     if (clicked) return
-    markSeen()
+    setSelectedSchool(null)
+    try {
+      localStorage.removeItem(SEEN_KEY)
+    } catch {
+      // localStorage unavailable - not fatal, just won't persist
+    }
     onClose()
-    navigate('/shop')
+    navigate('/')
   }
 
   return (

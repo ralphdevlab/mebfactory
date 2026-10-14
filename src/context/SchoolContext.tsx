@@ -4,7 +4,9 @@ const STORAGE_KEY = 'mebfactory_school'
 
 interface SchoolContextValue {
   selectedSchool: string
-  setSelectedSchool: (school: string) => void
+  // Accepts null (as well as '') to explicitly clear the pick - either way
+  // the localStorage key is removed, never set to the literal string "null".
+  setSelectedSchool: (school: string | null) => void
 }
 
 const SchoolContext = createContext<SchoolContextValue | undefined>(undefined)
@@ -20,8 +22,8 @@ export function SchoolProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const setSelectedSchool = (school: string) => {
-    setSelectedSchoolState(school)
+  const setSelectedSchool = (school: string | null) => {
+    setSelectedSchoolState(school ?? '')
     try {
       if (school) localStorage.setItem(STORAGE_KEY, school)
       else localStorage.removeItem(STORAGE_KEY)
