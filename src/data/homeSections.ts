@@ -1,5 +1,3 @@
-import { cat } from './nav'
-
 // Config for the homepage's horizontal-scroll category pills (directly below
 // the hero). Client feedback (2026-10-14): drop the regular taxonomy pills
 // (New In/Woman/Man/Tops/Bottoms/Outerwear/Sale) and show only the college
@@ -23,11 +21,3 @@ export const CATEGORY_PILLS: CategoryPill[] = [
   { label: 'BCU', color: '#862633', to: '/shop?collection=bcu' },
   { label: 'SPELMAN', color: '#00205B', to: '/shop?collection=spelman' },
 ]
-
-// Full-bleed editorial banner.
-export const EDITORIAL_BANNER = {
-  image: 'https://images.unsplash.com/photo-1475178626620-a4d074967452?w=1920&q=80',
-  headline: 'JEANS BY FIT',
-  cta: 'SHOP NOW',
-  to: cat('jeans').to,
-}

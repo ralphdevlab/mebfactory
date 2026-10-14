@@ -4,9 +4,8 @@ import HeroSlider from '../components/HeroSlider'
 import CategoryPills from '../components/CategoryPills'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/ProductCardSkeleton'
-import Placeholder from '../components/Placeholder'
+import ProductCarousel from '../components/ProductCarousel'
 import { fetchProducts } from '../lib/products'
-import { EDITORIAL_BANNER } from '../data/homeSections'
 import type { Product } from '../types'
 
 export default function Home() {
@@ -15,17 +14,11 @@ export default function Home() {
 
   const [newArrivals, setNewArrivals] = useState<Product[]>([])
   const [newArrivalsLoading, setNewArrivalsLoading] = useState(true)
-  const [allProducts, setAllProducts] = useState<Product[]>([])
-  const [allProductsLoading, setAllProductsLoading] = useState(true)
 
   useEffect(() => {
     fetchProducts({ isNew: true })
       .then((products) => setNewArrivals(products.slice(0, 8)))
       .finally(() => setNewArrivalsLoading(false))
-
-    fetchProducts()
-      .then((products) => setAllProducts(products.slice(0, 8)))
-      .finally(() => setAllProductsLoading(false))
   }, [])
 
   // The navbar/drawer's COLLECTIONS link points at /#collections - scroll to
@@ -55,41 +48,15 @@ export default function Home() {
         loading={newArrivalsLoading}
       />
 
-      {/* 4. Editorial banner */}
-      <Link
-        to={EDITORIAL_BANNER.to}
-        className="relative block h-[50vh] w-full overflow-hidden md:h-[65vh]"
-      >
-        <img
-          src={EDITORIAL_BANNER.image}
-          alt={EDITORIAL_BANNER.headline}
-          loading="lazy"
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center text-white">
-          <p className="text-[36px] font-bold uppercase leading-none">{EDITORIAL_BANNER.headline}</p>
-          <span className="bg-white px-8 py-3 text-[11px] uppercase tracking-[0.14em] text-black">
-            {EDITORIAL_BANNER.cta}
-          </span>
-        </div>
-        <Placeholder />
-      </Link>
-
-      {/* 5. All products */}
-      <ProductSection
-        title="ALL PRODUCTS"
-        viewAllTo="/shop"
-        products={allProducts}
-        loading={allProductsLoading}
-      />
+      {/* 4. It may interest you */}
+      <ProductCarousel title="IT MAY INTEREST YOU" />
     </div>
   )
 }
 
-// Shared "section header + 2/4-col product grid" layout for New Arrivals and
-// All Products. Shows 6 cards on mobile / 8 on desktop (the last two fetched
-// products are hidden below the md breakpoint) and a skeleton grid while
-// loading.
+// "Section header + 2/4-col product grid" layout for New Arrivals. Shows 6
+// cards on mobile / 8 on desktop (the last two fetched products are hidden
+// below the md breakpoint) and a skeleton grid while loading.
 function ProductSection({
   title,
   viewAllTo,
