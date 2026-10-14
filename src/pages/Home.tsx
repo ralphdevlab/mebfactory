@@ -5,21 +5,47 @@ import CategoryPills from '../components/CategoryPills'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/ProductCardSkeleton'
 import ProductCarousel from '../components/ProductCarousel'
+import SchoolSelectorModal from '../components/SchoolSelectorModal'
 import { fetchProducts } from '../lib/products'
+import { useSchool } from '../context/SchoolContext'
+import { schoolName } from '../data/schools'
 import type { Product } from '../types'
+
+const SCHOOL_MODAL_SEEN_KEY = 'mebfactory_school_selected'
 
 export default function Home() {
   const location = useLocation()
   const collectionsRef = useRef<HTMLDivElement>(null)
+  const { selectedSchool } = useSchool()
+
+  // Shows automatically on first visit (no "seen" flag yet) and whenever
+  // "Change school" is clicked.
+  const [modalOpen, setModalOpen] = useState(() => {
+    try {
+      return localStorage.getItem(SCHOOL_MODAL_SEEN_KEY) !== 'true'
+    } catch {
+      return false
+    }
+  })
 
   const [newArrivals, setNewArrivals] = useState<Product[]>([])
   const [newArrivalsLoading, setNewArrivalsLoading] = useState(true)
+  const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [allProductsLoading, setAllProductsLoading] = useState(true)
 
+  // Re-fetches whenever the selected school changes (picking one in the
+  // modal, or clearing it), so both sections filter live without a reload.
   useEffect(() => {
-    fetchProducts({ isNew: true })
+    setNewArrivalsLoading(true)
+    fetchProducts(selectedSchool ? { collection: selectedSchool, isNew: true } : { isNew: true })
       .then((products) => setNewArrivals(products.slice(0, 8)))
       .finally(() => setNewArrivalsLoading(false))
-  }, [])
+
+    setAllProductsLoading(true)
+    fetchProducts(selectedSchool ? { collection: selectedSchool } : undefined)
+      .then((products) => setAllProducts(products.slice(0, 8)))
+      .finally(() => setAllProductsLoading(false))
+  }, [selectedSchool])
 
   // The navbar/drawer's COLLECTIONS link points at /#collections - scroll to
   // the pills row whenever that hash is the current location (on mount from
@@ -30,8 +56,12 @@ export default function Home() {
     }
   }, [location.hash])
 
+  const school = selectedSchool ? schoolName(selectedSchool) : undefined
+
   return (
     <div className="bg-white">
+      <SchoolSelectorModal open={modalOpen} onClose={() => setModalOpen(false)} />
+
       {/* 1. Hero */}
       <HeroSlider />
 
@@ -42,36 +72,60 @@ export default function Home() {
 
       {/* 3. New arrivals */}
       <ProductSection
-        title="NEW ARRIVALS"
-        viewAllTo="/shop?new=true"
+        title={school ? `${school} — NEW ARRIVALS` : 'NEW ARRIVALS'}
+        viewAllTo={selectedSchool ? `/shop?collection=${selectedSchool}&new=true` : '/shop?new=true'}
         products={newArrivals}
         loading={newArrivalsLoading}
+        onChangeSchool={() => setModalOpen(true)}
       />
 
-      {/* 4. It may interest you */}
+      {/* 4. All products */}
+      <ProductSection
+        title="ALL PRODUCTS"
+        viewAllTo={selectedSchool ? `/shop?collection=${selectedSchool}` : '/shop'}
+        products={allProducts}
+        loading={allProductsLoading}
+      />
+
+      {/* 5. It may interest you */}
       <ProductCarousel title="IT MAY INTEREST YOU" />
     </div>
   )
 }
 
-// "Section header + 2/4-col product grid" layout for New Arrivals. Shows 6
-// cards on mobile / 8 on desktop (the last two fetched products are hidden
-// below the md breakpoint) and a skeleton grid while loading.
+// "Section header + 2/4-col product grid" layout for New Arrivals and All
+// Products. Shows 6 cards on mobile / 8 on desktop (the last two fetched
+// products are hidden below the md breakpoint) and a skeleton grid while
+// loading. `onChangeSchool`, when given, renders a "Change school" link next
+// to the title that reopens the selector modal.
 function ProductSection({
   title,
   viewAllTo,
   products,
   loading,
+  onChangeSchool,
 }: {
   title: string
   viewAllTo: string
   products: Product[]
   loading: boolean
+  onChangeSchool?: () => void
 }) {
   return (
     <section className="pt-8">
       <div className="flex items-baseline justify-between px-4 pb-4 md:px-6">
-        <h2 className="text-[14px] font-bold uppercase text-ink">{title}</h2>
+        <div className="flex items-baseline gap-3">
+          <h2 className="text-[14px] font-bold uppercase text-ink">{title}</h2>
+          {onChangeSchool && (
+            <button
+              type="button"
+              onClick={onChangeSchool}
+              className="text-[10px] uppercase tracking-[0.06em] text-muted underline hover:text-ink"
+            >
+              Change school
+            </button>
+          )}
+        </div>
         <Link to={viewAllTo} className="text-[11px] uppercase tracking-[0.06em] text-ink hover:text-muted">
           VIEW ALL →
         </Link>
