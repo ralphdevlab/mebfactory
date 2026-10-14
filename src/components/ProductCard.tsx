@@ -1,25 +1,20 @@
 import { Link } from 'react-router-dom'
 import type { Product } from '../types'
+import ProductImage from './ProductImage'
 import ProductTag from './ProductTag'
 import WishlistButton from './WishlistButton'
 
 export default function ProductCard({ product }: { product: Product }) {
   const onSale = product.salePrice !== undefined
-  const image = product.images[0]
 
   return (
     <Link to={`/product/${product.id}`} className="group block bg-white">
       <div className="relative aspect-[3/4] overflow-hidden bg-paper">
-        {image ? (
-          <img
-            src={image}
-            alt={product.name}
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="h-full w-full bg-paper" />
-        )}
+        <ProductImage
+          src={product.images?.[0]}
+          alt={product.name}
+          className="h-full w-full object-cover"
+        />
         <ProductTag tag={product.tag} />
         <WishlistButton
           product={product}

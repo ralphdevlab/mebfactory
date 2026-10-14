@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchProducts } from '../lib/products'
+import ProductImage from './ProductImage'
 import type { Product } from '../types'
 
 // Horizontal scroll-snap rail of products under a bold section header, with
@@ -54,9 +55,11 @@ export default function ProductCarousel({ title }: { title: string }) {
             >
               <div className="bg-paper">
                 <div className="aspect-[3/4] p-4">
-                  {product.images[0] && (
-                    <img src={product.images[0]} alt={product.name} className="h-full w-full object-contain" />
-                  )}
+                  <ProductImage
+                    src={product.images?.[0]}
+                    alt={product.name}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
               </div>
               <div className="px-2 pb-4 pt-2">

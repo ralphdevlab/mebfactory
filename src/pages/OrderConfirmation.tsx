@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Button from '../components/Button'
+import ProductImage from '../components/ProductImage'
 import { api } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import type { ApiOrder } from '../lib/orders'
@@ -53,8 +54,8 @@ export default function OrderConfirmation() {
         {order.items.map((item) => (
           <div key={item.id} className="flex items-center gap-4 py-4">
             <div className="h-16 w-14 shrink-0 overflow-hidden bg-hero">
-              <img
-                src={item.product.images[0] ?? ''}
+              <ProductImage
+                src={item.product.images?.[0]}
                 alt={item.product.name}
                 className="h-full w-full object-cover"
               />

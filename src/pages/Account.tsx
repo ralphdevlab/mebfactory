@@ -3,6 +3,7 @@ import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
 import EmptyState from '../components/EmptyState'
+import ProductImage from '../components/ProductImage'
 import { ReceiptIcon, HeartIcon } from '../components/icons'
 import { api } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
@@ -170,8 +171,8 @@ function OrdersTab() {
             {order.items.map((item) => (
               <div key={item.id} className="flex items-center gap-4">
                 <div className="h-16 w-14 shrink-0 overflow-hidden bg-hero">
-                  <img
-                    src={item.product.images[0] ?? ''}
+                  <ProductImage
+                    src={item.product.images?.[0]}
                     alt={item.product.name}
                     className="h-full w-full object-cover"
                   />
@@ -212,9 +213,11 @@ function WishlistTab() {
       {lines.map((line) => (
         <div key={line.id} className="flex items-center gap-4 py-6 first:pt-0">
           <Link to={`/product/${line.product.id}`} className="h-20 w-16 shrink-0 overflow-hidden bg-hero">
-            {line.product.images[0] && (
-              <img src={line.product.images[0]} alt={line.product.name} className="h-full w-full object-cover" />
-            )}
+            <ProductImage
+              src={line.product.images?.[0]}
+              alt={line.product.name}
+              className="h-full w-full object-cover"
+            />
           </Link>
           <div className="flex-1">
             <p className="label text-muted">{line.product.category}</p>

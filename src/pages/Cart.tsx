@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Button from '../components/Button'
 import EmptyState from '../components/EmptyState'
+import ProductImage from '../components/ProductImage'
 import { BagIcon } from '../components/icons'
 import { useCart } from '../context/CartContext'
 
@@ -35,9 +36,11 @@ export default function Cart() {
               return (
                 <div key={line.id} className="flex gap-4 py-5">
                   <Link to={`/product/${product.id}`} className="h-20 w-20 shrink-0 overflow-hidden bg-hero">
-                    {product.images[0] && (
-                      <img src={product.images[0]} alt={product.name} loading="lazy" className="h-full w-full object-cover" />
-                    )}
+                    <ProductImage
+                      src={product.images?.[0]}
+                      alt={product.name}
+                      className="h-full w-full object-cover"
+                    />
                   </Link>
 
                   <div className="flex flex-1 flex-col justify-between">

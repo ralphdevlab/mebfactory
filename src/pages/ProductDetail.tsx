@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import WishlistButton from '../components/WishlistButton'
 import ProductCarousel from '../components/ProductCarousel'
+import ProductImage from '../components/ProductImage'
 import { ChevronIcon } from '../components/icons'
 import { fetchProduct } from '../lib/products'
 import { useCart } from '../context/CartContext'
@@ -94,18 +95,18 @@ export default function ProductDetail() {
           >
             {product.images.length > 0 ? (
               product.images.map((image, index) => (
-                <img
+                <ProductImage
                   key={image}
                   src={image}
                   alt={product.name}
                   loading={index === 0 ? 'eager' : 'lazy'}
-                  className={`h-full w-full shrink-0 snap-start object-cover ${
+                  className={`h-full w-full shrink-0 snap-start object-contain ${
                     index === activeImage ? '' : 'md:hidden'
                   }`}
                 />
               ))
             ) : (
-              <div className="h-full w-full bg-hero" />
+              <ProductImage src={undefined} alt={product.name} className="h-full w-full object-contain" />
             )}
           </div>
 
@@ -139,7 +140,7 @@ export default function ProductDetail() {
                       index === activeImage ? 'opacity-100 ring-1 ring-charcoal' : 'opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <img src={image} alt="" loading="lazy" className="h-full w-full object-cover" />
+                    <ProductImage src={image} alt="" className="h-full w-full object-cover" />
                   </button>
                 ))}
               </div>
