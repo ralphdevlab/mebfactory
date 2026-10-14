@@ -161,7 +161,7 @@ export default function ProductDetail() {
             {onSale && (
               <span className="text-base font-normal text-muted line-through">${product.price}</span>
             )}
-            <span className={`text-lg font-medium ${onSale ? 'text-sand' : 'text-ink'}`}>
+            <span className={`text-lg font-medium ${onSale ? 'text-[#C4847A]' : 'text-ink'}`}>
               ${product.salePrice ?? product.price}
             </span>
           </div>

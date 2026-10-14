@@ -22,7 +22,7 @@ export default function ProductCarousel({ title }: { title: string }) {
 
   return (
     <section className="group/carousel relative bg-white">
-      <h2 className="px-6 pb-4 pt-6 text-[24px] font-bold uppercase text-ink">{title}</h2>
+      <h2 className="px-6 pb-4 pt-6 text-[24px] font-bold uppercase text-[#8B5E52]">{title}</h2>
 
       <button
         type="button"
@@ -66,7 +66,7 @@ export default function ProductCarousel({ title }: { title: string }) {
                 <p className="text-[11px] font-bold uppercase text-ink">{product.name}</p>
                 <div className="mt-1 flex items-center gap-2 text-[12px]">
                   {onSale && <span className="text-muted line-through">${product.price}</span>}
-                  <span className={onSale ? 'text-sand' : 'text-ink'}>
+                  <span className={onSale ? 'text-[#C4847A]' : 'text-ink'}>
                     ${product.salePrice ?? product.price}
                   </span>
                 </div>

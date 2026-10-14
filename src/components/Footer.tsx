@@ -39,7 +39,7 @@ const FOOTER_COLUMNS = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-white">
+    <footer className="border-t border-[#E8C4B8] bg-white">
       <div className="px-4 pt-10 md:px-6">
         <Link to="/" className="text-[16px] font-bold tracking-[0.14em] text-ink">
           MEBFACTORY
@@ -49,7 +49,7 @@ export default function Footer() {
       <div className="grid grid-cols-2 gap-8 px-4 py-8 md:grid-cols-4 md:px-6">
         {FOOTER_COLUMNS.map((col) => (
           <div key={col.heading}>
-            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em] text-ink">
+            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em] text-[#8B5E52]">
               {col.heading}
             </p>
             <ul className="flex flex-col gap-3">
@@ -57,7 +57,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="block min-h-[20px] text-[12px] uppercase tracking-[0.04em] text-muted hover:text-ink"
+                    className="block min-h-[20px] text-[12px] uppercase tracking-[0.04em] text-muted hover:text-[#A07060]"
                   >
                     {link.label}
                   </Link>
@@ -68,9 +68,9 @@ export default function Footer() {
         ))}
       </div>
 
-      <div className="border-t border-border">
+      <div className="border-t border-[#E8C4B8] bg-[#FDF0EC]">
         <div className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between md:px-6">
-          <p className="text-[10px] text-muted">© 2026 MEBFACTORY</p>
+          <p className="text-[10px] text-[#A07060]">© 2026 MEBFACTORY</p>
           <p className="text-[10px] tracking-[0.1em] text-muted">VISA MASTERCARD AMEX</p>
         </div>
       </div>

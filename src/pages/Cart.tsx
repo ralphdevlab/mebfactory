@@ -91,22 +91,25 @@ export default function Cart() {
         </div>
 
         {/* Order summary - desktop only; mobile uses the sticky bottom bar instead */}
-        <div className="hidden w-full shrink-0 border border-border bg-surface p-6 md:block md:w-80">
-          <p className="label text-ink">Order Summary</p>
+        <div
+          className="hidden w-full shrink-0 border border-[#E8C49A] p-6 md:block md:w-80"
+          style={{ background: 'linear-gradient(135deg, #FDF3E7 0%, #FAE8D8 100%)' }}
+        >
+          <p className="label text-[#8B6914]">Order Summary</p>
           <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm font-normal text-muted">Subtotal</p>
+            <p className="text-sm font-normal text-[#8B6914]">Subtotal</p>
             <p className="text-sm font-medium text-ink">${subtotal}</p>
           </div>
           <div className="mt-2 flex items-center justify-between">
             <p className="text-sm font-normal text-muted">Shipping</p>
             <p className="text-sm font-normal text-muted">Calculated at checkout</p>
           </div>
-          <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-            <p className="text-sm font-medium text-ink">Total</p>
+          <div className="mt-4 flex items-center justify-between border-t border-[#E8C49A] pt-4">
+            <p className="text-sm font-medium text-[#8B6914]">Total</p>
             <p className="text-sm font-medium text-ink">${subtotal}</p>
           </div>
           <Link to="/checkout" className="mt-6 block">
-            <Button variant="primary" className="w-full">
+            <Button variant="primary" className="w-full border border-[#C4A45A]">
               Proceed to Checkout
             </Button>
           </Link>

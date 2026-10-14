@@ -114,8 +114,8 @@ export default function Shop() {
                 onClick={() => setChip(c)}
                 className={`shrink-0 whitespace-nowrap border px-3.5 py-2 text-[11px] uppercase tracking-[0.08em] transition-colors ${
                   chip === c
-                    ? 'border-ink bg-ink text-white'
-                    : 'border-border bg-white text-ink hover:border-ink'
+                    ? 'border-[#8B5E52] bg-[#8B5E52] text-white'
+                    : 'border-[#E8C4B8] bg-white text-ink hover:border-[#8B5E52]'
                 }`}
               >
                 {c}

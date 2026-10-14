@@ -90,9 +90,13 @@ export default function SchoolSelectorModal({ open, onClose }: { open: boolean; 
       className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4"
       onClick={dismiss}
     >
-      <div className="w-full max-w-md bg-white p-6" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="w-full max-w-md bg-white p-6"
+        style={{ boxShadow: '0 8px 40px rgba(196, 132, 122, 0.2)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="text-center text-[22px] font-bold uppercase text-ink">What's Your School?</h2>
-        <p className="mx-auto mt-2 max-w-[280px] text-center text-[13px] text-muted">
+        <p className="mx-auto mt-2 max-w-[280px] text-center text-[13px] text-[#A07060]">
           Show us your pride. We'll show you your collection.
         </p>
 
@@ -121,7 +125,7 @@ export default function SchoolSelectorModal({ open, onClose }: { open: boolean; 
         <button
           type="button"
           onClick={browseAll}
-          className="mx-auto mt-6 block text-[12px] uppercase tracking-[0.08em] text-muted underline hover:text-ink"
+          className="mx-auto mt-6 block text-[12px] uppercase tracking-[0.08em] text-[#C4847A] underline hover:opacity-70"
         >
           Browse All
         </button>

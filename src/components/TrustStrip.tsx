@@ -6,12 +6,12 @@ const ITEMS = [
 
 export default function TrustStrip() {
   return (
-    <div className="rounded-[6px] border-y border-border bg-surface">
-      <div className="mx-auto grid max-w-[1440px] grid-cols-1 divide-y-[0.5px] divide-border md:grid-cols-3 md:divide-x-[0.5px] md:divide-y-0">
+    <div className="rounded-[6px] border-y border-[#E8C4B8] bg-[#FDF0EC]">
+      <div className="mx-auto grid max-w-[1440px] grid-cols-1 divide-y-[0.5px] divide-[#E8C4B8] md:grid-cols-3 md:divide-x-[0.5px] md:divide-y-0">
         {ITEMS.map((item) => (
-          <div key={item.title} className="flex items-center justify-center gap-2 py-3 md:py-4">
+          <div key={item.title} className="flex items-center justify-center gap-2 py-3 text-[#A07060] md:py-4">
             <item.icon />
-            <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-ink">{item.title}</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.14em]">{item.title}</p>
           </div>
         ))}
       </div>

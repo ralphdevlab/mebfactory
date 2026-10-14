@@ -14,10 +14,10 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-white">
+    <header className="sticky top-0 z-50 border-b border-[#E8C4B8] bg-white">
       {/* Desktop */}
       <div className="mx-auto hidden h-[60px] max-w-[1440px] items-center px-6 md:flex">
-        <Link to="/" className="shrink-0 text-[18px] font-bold tracking-[0.14em] text-ink">
+        <Link to="/" className="shrink-0 text-[18px] font-bold tracking-[0.14em] text-[#8B5E52]">
           MEBFACTORY
         </Link>
 
@@ -26,7 +26,7 @@ export default function Navbar() {
             <NavLink
               key={link.label}
               to={link.to}
-              className="text-[13px] font-medium uppercase tracking-[0.08em] text-ink transition-colors hover:text-muted"
+              className="text-[13px] font-medium uppercase tracking-[0.08em] text-ink transition-colors hover:text-[#C4847A]"
             >
               {link.label}
             </NavLink>
@@ -69,7 +69,7 @@ export default function Navbar() {
         >
           <MenuIcon size={22} />
         </button>
-        <Link to="/" className="text-[16px] font-bold tracking-[0.14em] text-ink">
+        <Link to="/" className="text-[16px] font-bold tracking-[0.14em] text-[#8B5E52]">
           MEBFACTORY
         </Link>
         <Link

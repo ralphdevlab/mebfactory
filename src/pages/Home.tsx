@@ -115,18 +115,18 @@ function ProductSection({
     <section className="pt-8">
       <div className="flex items-baseline justify-between px-4 pb-4 md:px-6">
         <div className="flex items-baseline gap-3">
-          <h2 className="text-[14px] font-bold uppercase text-ink">{title}</h2>
+          <h2 className="text-[14px] font-bold uppercase text-[#8B5E52]">{title}</h2>
           {onChangeSchool && (
             <button
               type="button"
               onClick={onChangeSchool}
-              className="text-[10px] uppercase tracking-[0.06em] text-muted underline hover:text-ink"
+              className="text-[10px] uppercase tracking-[0.06em] text-[#C4847A] underline hover:opacity-70"
             >
               Change school
             </button>
           )}
         </div>
-        <Link to={viewAllTo} className="text-[11px] uppercase tracking-[0.06em] text-ink hover:text-muted">
+        <Link to={viewAllTo} className="text-[11px] uppercase tracking-[0.06em] text-[#C4847A] hover:opacity-70">
           VIEW ALL →
         </Link>
       </div>

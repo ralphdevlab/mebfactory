@@ -36,11 +36,12 @@
     font-weight: 400;
     color: var(--color-ink);
     background: linear-gradient(135deg,
-      #fdf6f0 0%,
-      #faf0f5 25%,
-      #f5f0fa 50%,
-      #f0f5fa 75%,
-      #faf5f0 100%
+      #fdeee4 0%,
+      #fae8f0 20%,
+      #f3e8f8 40%,
+      #e8eef8 60%,
+      #f0eaf8 80%,
+      #fae8f0 100%
     );
     background-attachment: fixed;
     min-height: 100vh;

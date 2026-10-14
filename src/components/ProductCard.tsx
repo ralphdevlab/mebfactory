@@ -8,7 +8,10 @@ export default function ProductCard({ product }: { product: Product }) {
   const onSale = product.salePrice !== undefined
 
   return (
-    <Link to={`/product/${product.id}`} className="group block bg-white">
+    <Link
+      to={`/product/${product.id}`}
+      className="group block border border-transparent bg-white hover:border-[#E8C4B8]"
+    >
       <div className="relative aspect-[3/4] overflow-hidden bg-paper">
         <ProductImage
           src={product.images?.[0]}
@@ -24,7 +27,7 @@ export default function ProductCard({ product }: { product: Product }) {
       <p className="px-2 pb-0.5 pt-2 text-[12px] font-medium uppercase text-ink">{product.name}</p>
       <div className="flex items-center gap-2 px-2 pb-2 text-[12px]">
         {onSale && <span className="font-normal text-muted line-through">${product.price}</span>}
-        <span className={onSale ? 'text-sand' : 'text-ink'}>${product.salePrice ?? product.price}</span>
+        <span className={onSale ? 'text-[#C4847A]' : 'text-ink'}>${product.salePrice ?? product.price}</span>
       </div>
     </Link>
   )
