@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import HeroSlider from '../components/HeroSlider'
 import CategoryPills from '../components/CategoryPills'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/ProductCardSkeleton'
 import Placeholder from '../components/Placeholder'
 import { fetchProducts } from '../lib/products'
-import { CATEGORY_TILES, EDITORIAL_BANNER, tileLink } from '../data/homeSections'
+import { EDITORIAL_BANNER } from '../data/homeSections'
 import type { Product } from '../types'
 
 export default function Home() {
+  const location = useLocation()
+  const collectionsRef = useRef<HTMLDivElement>(null)
+
   const [newArrivals, setNewArrivals] = useState<Product[]>([])
   const [newArrivalsLoading, setNewArrivalsLoading] = useState(true)
   const [allProducts, setAllProducts] = useState<Product[]>([])
@@ -25,13 +28,24 @@ export default function Home() {
       .finally(() => setAllProductsLoading(false))
   }, [])
 
+  // The navbar/drawer's COLLECTIONS link points at /#collections - scroll to
+  // the pills row whenever that hash is the current location (on mount from
+  // another page, or a same-page click while already on "/").
+  useEffect(() => {
+    if (location.hash === '#collections') {
+      collectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [location.hash])
+
   return (
     <div className="bg-white">
       {/* 1. Hero */}
       <HeroSlider />
 
       {/* 2. Category pills */}
-      <CategoryPills />
+      <div id="collections" ref={collectionsRef}>
+        <CategoryPills />
+      </div>
 
       {/* 3. New arrivals */}
       <ProductSection
@@ -41,24 +55,7 @@ export default function Home() {
         loading={newArrivalsLoading}
       />
 
-      {/* 4. Shop by category */}
-      <section className="pt-8">
-        <h2 className="px-4 pb-4 text-[14px] font-bold uppercase text-ink md:px-6">SHOP BY CATEGORY</h2>
-        <div className="grid grid-cols-2 gap-[2px]">
-          {CATEGORY_TILES.map((tile) => (
-            <Link key={tile.label} to={tileLink(tile.label)} className="relative block aspect-[4/3] overflow-hidden">
-              <img src={tile.image} alt={tile.label} loading="lazy" className="h-full w-full object-cover" />
-              <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/60 to-transparent" />
-              <span className="absolute bottom-3 left-3 text-[13px] font-bold uppercase text-white">
-                {tile.label}
-              </span>
-              <Placeholder />
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* 5. Editorial banner */}
+      {/* 4. Editorial banner */}
       <Link
         to={EDITORIAL_BANNER.to}
         className="relative block h-[50vh] w-full overflow-hidden md:h-[65vh]"
@@ -78,7 +75,7 @@ export default function Home() {
         <Placeholder />
       </Link>
 
-      {/* 6. All products */}
+      {/* 5. All products */}
       <ProductSection
         title="ALL PRODUCTS"
         viewAllTo="/shop"

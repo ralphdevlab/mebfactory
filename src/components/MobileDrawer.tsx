@@ -2,11 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
-import {
-  MAN_SUBCATEGORIES,
-  WOMAN_SUBCATEGORIES,
-  type NavItem,
-} from '../data/nav'
+import { WOMAN_SUBCATEGORIES, type NavItem } from '../data/nav'
 import { ChevronIcon, CloseIcon, SearchIcon } from './icons'
 
 // Off-canvas navigation for the mobile navbar's hamburger. Always mounted so
@@ -23,7 +19,7 @@ export default function MobileDrawer({
 }) {
   const { user } = useAuth()
   const { itemCount } = useCart()
-  const [expanded, setExpanded] = useState<'woman' | 'man' | null>(null)
+  const [expanded, setExpanded] = useState<'woman' | null>(null)
 
   const close = () => {
     setExpanded(null)
@@ -73,15 +69,8 @@ export default function MobileDrawer({
             items={WOMAN_SUBCATEGORIES}
             onNavigate={close}
           />
-          <ExpandableRow
-            label="MAN"
-            open={expanded === 'man'}
-            onToggle={() => setExpanded((v) => (v === 'man' ? null : 'man'))}
-            items={MAN_SUBCATEGORIES}
-            onNavigate={close}
-          />
 
-          <DrawerLink to="/shop?new=true" onClick={close}>NEW IN</DrawerLink>
+          <DrawerLink to="/#collections" onClick={close}>Collections</DrawerLink>
           <DrawerLink to="/shop?sale=true" onClick={close}>SALE</DrawerLink>
 
           <div className="mt-auto border-t border-border">

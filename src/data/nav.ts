@@ -40,20 +40,16 @@ export const MAN_MENU: MegaMenu = {
   caption: 'NEW IN',
 }
 
-// Flat subcategory lists for the mobile drawer's expandable Woman / Man rows.
+// Flat subcategory list for the mobile drawer's expandable Woman row.
 export const WOMAN_SUBCATEGORIES: NavItem[] = [
   'NEW IN', 'JACKETS', 'TOPS', 'PANTS', 'JEANS',
   'DRESSES', 'SHORTS', 'SKIRTS', 'SHOES', 'ACCESSORIES',
 ].map(cat)
 
-export const MAN_SUBCATEGORIES: NavItem[] = [
-  'NEW IN', 'JACKETS', 'T-SHIRTS', 'JEANS', 'PANTS',
-  'SWEATSHIRTS', 'SHORTS', 'SHIRTS', 'SHOES', 'ACCESSORIES',
-].map(cat)
-
+// Desktop nav is now women's-focused and simplified; COLLECTIONS jumps to
+// the college-collection pills row on the homepage (id="collections").
 export const PRIMARY_LINKS: NavItem[] = [
-  { label: 'WOMAN', to: '/shop?category=woman' },
-  { label: 'MAN', to: '/shop?category=man' },
-  { label: 'NEW', to: '/shop?new=true' },
+  { label: 'SHOP', to: '/shop' },
+  { label: 'COLLECTIONS', to: '/#collections' },
   { label: 'SALE', to: '/shop?sale=true' },
 ]
