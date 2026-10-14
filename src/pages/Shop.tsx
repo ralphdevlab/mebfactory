@@ -54,14 +54,26 @@ export default function Shop() {
   const [chip, setChip] = useState<Chip>(initialChip)
   const [sort, setSort] = useState<Sort>('new')
 
-  // The backend's GET /api/products only understands a single `category`,
-  // `collection` and `new` query param, so — exactly as before — only the
-  // initial URL params are sent to the API and everything after is filtered
-  // client-side. Runs once on mount.
+  // Non-college chips (ALL/NEW IN/SALE/WOMAN/TOPS/BOTTOMS) are filtered
+  // client-side below from whatever's in `products`, so one broad fetch on
+  // mount covers all of them. College chips are different: the backend can
+  // only ever have fetched ONE collection's worth of products into
+  // `products` at a time, so switching between college chips (or in from/
+  // out to a non-college chip) has to re-fetch - otherwise, e.g. a deep
+  // link to ?collection=uf never loads FSU's products, and clicking the
+  // FSU chip afterwards silently shows zero results forever.
+  const activeCollegeSlug = COLLEGE_SLUGS.find((slug) => slug.toUpperCase() === chip) ?? null
+
   useEffect(() => {
     setLoading(true)
-    const params =
-      urlCategory || urlCollection || urlNew
+    // The non-college branch mirrors the original mount-only fetch so a
+    // deep link combining `collection` with `category`/`new` (e.g. the
+    // homepage's "VIEW ALL" link for a selected school's new arrivals)
+    // still works on first load, even though its initial chip is "NEW IN"
+    // rather than a college chip.
+    const params = activeCollegeSlug
+      ? { collection: activeCollegeSlug }
+      : urlCategory || urlCollection || urlNew
         ? {
             ...(urlCategory ? { category: urlCategory } : {}),
             ...(urlCollection ? { collection: urlCollection } : {}),
@@ -71,7 +83,7 @@ export default function Shop() {
     fetchProducts(params)
       .then(setProducts)
       .finally(() => setLoading(false))
-  }, [])
+  }, [activeCollegeSlug])
 
   const filtered = useMemo(() => {
     let list = products.filter((p) => {
