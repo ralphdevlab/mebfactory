@@ -67,20 +67,17 @@ export default function SchoolSelectorModal({ open, onClose }: { open: boolean; 
     onClose()
   }
 
-  // "Browse All" is an explicit reset: clear the pick (and the "seen"
-  // flag, so a fresh visit asks again rather than silently staying
-  // unfiltered) and land back on the homepage with no school filter -
-  // works the same whether the modal opened on first visit or via
-  // "Change school". Deliberately stays on "/" rather than going to
-  // /shop.
+  // "Browse All" is an explicit reset of the PICK only: clear
+  // mebfactory_school and land back on the homepage with no school
+  // filter. It still marks the modal as seen (same as picking a school)
+  // so it won't pop up again on a later visit - the "seen" flag must
+  // never be cleared, only ever set. Works the same whether the modal
+  // opened on first visit or via "Change school". Deliberately stays on
+  // "/" rather than going to /shop.
   function browseAll() {
     if (clicked) return
     setSelectedSchool(null)
-    try {
-      localStorage.removeItem(SEEN_KEY)
-    } catch {
-      // localStorage unavailable - not fatal, just won't persist
-    }
+    markSeen()
     onClose()
     navigate('/')
   }

@@ -18,11 +18,13 @@ export default function Home() {
   const collectionsRef = useRef<HTMLDivElement>(null)
   const { selectedSchool } = useSchool()
 
-  // Shows automatically on first visit (no "seen" flag yet) and whenever
-  // "Change school" is clicked.
+  // Shows automatically only the very first time (the flag has never been
+  // set, i.e. is exactly null) and whenever "Change school" is clicked.
+  // The flag itself is set once (on pick or Browse All) and never cleared
+  // anywhere, so this never re-opens on its own after that first visit.
   const [modalOpen, setModalOpen] = useState(() => {
     try {
-      return localStorage.getItem(SCHOOL_MODAL_SEEN_KEY) !== 'true'
+      return localStorage.getItem(SCHOOL_MODAL_SEEN_KEY) === null
     } catch {
       return false
     }
