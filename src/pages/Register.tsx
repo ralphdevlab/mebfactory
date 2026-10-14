@@ -31,7 +31,7 @@ export default function Register() {
 
   return (
     <div className="mx-auto max-w-md px-6 py-20">
-      <h1 className="text-2xl font-medium text-ink">Create an Account</h1>
+      <h1 className="text-3xl font-medium text-ink">Create an Account</h1>
 
       <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
         <div className="flex gap-4">

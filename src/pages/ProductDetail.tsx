@@ -152,7 +152,7 @@ export default function ProductDetail() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="label text-muted">{product.category}</p>
-              <h1 className="mt-1 text-[18px] font-bold uppercase text-ink">{product.name}</h1>
+              <h1 className="mt-1 text-[20px] font-bold uppercase text-ink">{product.name}</h1>
             </div>
             <WishlistButton product={product} className="flex h-11 w-11 shrink-0 items-center justify-center" />
           </div>

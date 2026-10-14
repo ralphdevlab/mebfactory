@@ -38,7 +38,7 @@ const WOMEN_ROWS: MeasurementRow[] = [
 export default function SizeGuide() {
   return (
     <div className="mx-auto max-w-[1000px] px-6 py-12">
-      <h1 className="border-b border-border pb-6 text-2xl font-medium text-ink">Size Guide</h1>
+      <h1 className="border-b border-border pb-6 text-3xl font-medium text-ink">Size Guide</h1>
       <p className="mt-6 text-sm font-normal leading-relaxed text-muted">
         Measurements are body measurements, not garment measurements. If you're between sizes, we recommend
         sizing up for a more relaxed fit.

@@ -79,7 +79,7 @@ export default function Checkout() {
 
   return (
     <div className="mx-auto max-w-lg px-6 py-12">
-      <h1 className="border-b border-border pb-6 text-2xl font-medium text-ink">Checkout</h1>
+      <h1 className="border-b border-border pb-6 text-3xl font-medium text-ink">Checkout</h1>
 
       <div className="mt-8 flex items-center justify-between border-b border-border pb-6">
         <p className="text-sm font-normal text-muted">Total</p>

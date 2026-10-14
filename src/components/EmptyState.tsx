@@ -15,7 +15,7 @@ export default function EmptyState({ icon, title, description, actionLabel, acti
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="text-muted">{icon}</div>
-      <h2 className="mt-4 text-lg font-medium text-ink">{title}</h2>
+      <h2 className="mt-4 text-xl font-medium text-ink">{title}</h2>
       {description && <p className="mt-2 text-sm font-normal text-muted">{description}</p>}
       {actionLabel && actionTo && (
         <Link to={actionTo} className="mt-8">

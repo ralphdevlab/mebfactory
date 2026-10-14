@@ -17,7 +17,10 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-[#E8C4B8] bg-white">
       {/* Desktop */}
       <div className="mx-auto hidden h-[60px] max-w-[1440px] items-center px-6 md:flex">
-        <Link to="/" className="shrink-0 text-[18px] font-bold tracking-[0.14em] text-[#8B5E52]">
+        <Link
+          to="/"
+          className="shrink-0 bg-gradient-to-r from-[#96701A] to-[#7A5A10] bg-clip-text font-serif text-[20px] font-bold italic tracking-[0.06em] text-transparent"
+        >
           MEBFACTORY
         </Link>
 
@@ -69,7 +72,10 @@ export default function Navbar() {
         >
           <MenuIcon size={22} />
         </button>
-        <Link to="/" className="text-[16px] font-bold tracking-[0.14em] text-[#8B5E52]">
+        <Link
+          to="/"
+          className="bg-gradient-to-r from-[#96701A] to-[#7A5A10] bg-clip-text font-serif text-[18px] font-bold italic tracking-[0.06em] text-transparent"
+        >
           MEBFACTORY
         </Link>
         <Link

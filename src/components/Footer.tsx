@@ -39,9 +39,12 @@ const FOOTER_COLUMNS = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#E8C4B8] bg-white">
+    <footer
+      className="border-t border-[#E8C4B8]"
+      style={{ background: 'linear-gradient(135deg, #FDF3E7 0%, #FAE8D8 100%)' }}
+    >
       <div className="px-4 pt-10 md:px-6">
-        <Link to="/" className="text-[16px] font-bold tracking-[0.14em] text-ink">
+        <Link to="/" className="font-serif text-[18px] font-bold italic tracking-[0.06em] text-[#7A5A10]">
           MEBFACTORY
         </Link>
       </div>
@@ -57,7 +60,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="block min-h-[20px] text-[12px] uppercase tracking-[0.04em] text-muted hover:text-[#A07060]"
+                    className="block min-h-[20px] text-[12px] uppercase tracking-[0.04em] text-[#6B5544] hover:text-[#8B5E52]"
                   >
                     {link.label}
                   </Link>

@@ -95,7 +95,7 @@ export default function SchoolSelectorModal({ open, onClose }: { open: boolean; 
         style={{ boxShadow: '0 8px 40px rgba(196, 132, 122, 0.2)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-center text-[22px] font-bold uppercase text-ink">What's Your School?</h2>
+        <h2 className="text-center text-[24px] font-bold uppercase text-ink">What's Your School?</h2>
         <p className="mx-auto mt-2 max-w-[280px] text-center text-[13px] text-[#A07060]">
           Show us your pride. We'll show you your collection.
         </p>

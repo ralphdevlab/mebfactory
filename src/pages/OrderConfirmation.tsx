@@ -35,7 +35,7 @@ export default function OrderConfirmation() {
   if (!order) {
     return (
       <div className="mx-auto max-w-lg px-6 py-20 text-center">
-        <h1 className="text-2xl font-medium text-ink">No order found</h1>
+        <h1 className="text-3xl font-medium text-ink">No order found</h1>
         <Link to="/shop" className="mt-8 inline-block">
           <Button variant="primary" className="px-10">
             Back to Shop
@@ -47,7 +47,7 @@ export default function OrderConfirmation() {
 
   return (
     <div className="mx-auto max-w-lg px-6 py-20 text-center">
-      <h1 className="text-2xl font-medium text-ink">Thank you for your order</h1>
+      <h1 className="text-3xl font-medium text-ink">Thank you for your order</h1>
       <p className="mt-2 text-sm font-normal text-muted">Order #{order.id}</p>
 
       <div className="mt-10 flex flex-col divide-y divide-border border-y border-border text-left">

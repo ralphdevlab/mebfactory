@@ -22,7 +22,7 @@ export default function ProductCarousel({ title }: { title: string }) {
 
   return (
     <section className="group/carousel relative bg-white">
-      <h2 className="px-6 pb-4 pt-6 text-[24px] font-bold uppercase text-[#8B5E52]">{title}</h2>
+      <h2 className="px-6 pb-4 pt-6 text-[28px] font-bold uppercase text-[#8B5E52]">{title}</h2>
 
       <button
         type="button"

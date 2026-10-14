@@ -47,7 +47,7 @@ export default function Account() {
 
   return (
     <div className="mx-auto max-w-[1440px] px-6 py-12">
-      <h1 className="border-b border-border pb-6 text-2xl font-medium text-ink">My Account</h1>
+      <h1 className="border-b border-border pb-6 text-3xl font-medium text-ink">My Account</h1>
 
       <div className="mt-10 flex flex-col gap-12 lg:flex-row">
         <aside className="flex shrink-0 gap-2 lg:w-56 lg:flex-col lg:gap-1">

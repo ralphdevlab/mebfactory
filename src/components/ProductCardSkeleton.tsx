@@ -1,6 +1,9 @@
 export default function ProductCardSkeleton() {
   return (
-    <div className="animate-pulse bg-white">
+    <div
+      className="animate-pulse"
+      style={{ background: 'linear-gradient(135deg, #FDF3E7 0%, #FAE8D8 100%)' }}
+    >
       <div className="aspect-[3/4] overflow-hidden bg-paper" />
       <div className="px-2 pb-2 pt-2">
         <div className="h-2.5 w-24 bg-border" />

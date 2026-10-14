@@ -22,7 +22,7 @@ export default function Cart() {
 
   return (
     <div className="pb-24 md:mx-auto md:max-w-[1440px] md:px-6 md:py-12 md:pb-12">
-      <h1 className="border-b border-border px-4 py-5 text-[18px] font-bold uppercase text-ink md:px-0 md:pb-6 md:pt-0 md:text-2xl">
+      <h1 className="border-b border-border px-4 py-5 text-[20px] font-bold uppercase text-ink md:px-0 md:pb-6 md:pt-0 md:text-3xl">
         Shopping Cart
       </h1>
 

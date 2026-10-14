@@ -141,7 +141,7 @@ export default function Shop() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px bg-[#E8C49A] md:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
@@ -149,7 +149,7 @@ export default function Shop() {
       ) : filtered.length === 0 ? (
         <p className="py-20 text-center text-sm text-muted">No products match the selected filters.</p>
       ) : (
-        <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px bg-[#E8C49A] md:grid-cols-4">
           {filtered.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

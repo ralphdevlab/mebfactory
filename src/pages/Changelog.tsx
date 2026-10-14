@@ -69,7 +69,7 @@ function StatusBadge({ status }: { status: Sprint['status'] }) {
 export default function Changelog() {
   return (
     <div className="mx-auto max-w-[760px] px-6 py-12">
-      <h1 className="text-[28px] font-bold uppercase tracking-[0.04em] text-ink">Build Log</h1>
+      <h1 className="text-[32px] font-bold uppercase tracking-[0.04em] text-ink">Build Log</h1>
       <p className="mt-3 text-sm font-normal leading-relaxed text-muted">
         Actively built using agile methodology based on client feedback
       </p>

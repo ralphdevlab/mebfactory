@@ -115,7 +115,7 @@ function ProductSection({
     <section className="pt-8">
       <div className="flex items-baseline justify-between px-4 pb-4 md:px-6">
         <div className="flex items-baseline gap-3">
-          <h2 className="text-[14px] font-bold uppercase text-[#8B5E52]">{title}</h2>
+          <h2 className="text-[16px] font-bold uppercase text-[#8B5E52]">{title}</h2>
           {onChangeSchool && (
             <button
               type="button"
@@ -132,7 +132,7 @@ function ProductSection({
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px bg-[#E8C49A] md:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className={i >= 6 ? 'hidden md:block' : ''}>
               <ProductCardSkeleton />
@@ -140,7 +140,7 @@ function ProductSection({
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px bg-[#E8C49A] md:grid-cols-4">
           {products.map((product, i) => (
             <div key={product.id} className={i >= 6 ? 'hidden md:block' : ''}>
               <ProductCard product={product} />
