@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useSchool } from '../context/SchoolContext'
 import { SCHOOLS } from '../data/schools'
 
@@ -21,6 +22,7 @@ interface ClickState {
 
 export default function SchoolSelectorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { setSelectedSchool } = useSchool()
+  const navigate = useNavigate()
   const [clicked, setClicked] = useState<ClickState | null>(null)
 
   useEffect(() => {
@@ -65,6 +67,17 @@ export default function SchoolSelectorModal({ open, onClose }: { open: boolean; 
     onClose()
   }
 
+  // "Browse All" is an explicit "take me to the shop" action (unlike
+  // dismissing via Escape/overlay click, which just closes the popup and
+  // leaves the shopper where they were) - works the same whether the modal
+  // opened on first visit or via "Change school".
+  function browseAll() {
+    if (clicked) return
+    markSeen()
+    onClose()
+    navigate('/shop')
+  }
+
   return (
     <div
       className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4"
@@ -100,7 +113,7 @@ export default function SchoolSelectorModal({ open, onClose }: { open: boolean; 
 
         <button
           type="button"
-          onClick={dismiss}
+          onClick={browseAll}
           className="mx-auto mt-6 block text-[12px] uppercase tracking-[0.08em] text-muted underline hover:text-ink"
         >
           Browse All

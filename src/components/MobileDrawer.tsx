@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import { WOMAN_SUBCATEGORIES, type NavItem } from '../data/nav'
-import { ChevronIcon, CloseIcon, SearchIcon } from './icons'
+import { ChevronIcon, CloseIcon, HomeIcon, SearchIcon } from './icons'
 
 // Off-canvas navigation for the mobile navbar's hamburger. Always mounted so
 // the slide transition runs both ways; `open` drives the transform and the
@@ -53,6 +53,10 @@ export default function MobileDrawer({
         </div>
 
         <nav className="flex h-[calc(100vh-52px)] flex-col overflow-y-auto">
+          <DrawerLink to="/" onClick={close} icon={<HomeIcon size={16} />}>
+            Home
+          </DrawerLink>
+
           <button
             type="button"
             onClick={onOpenSearch}
@@ -134,20 +138,23 @@ function DrawerLink({
   onClick,
   children,
   compact = false,
+  icon,
 }: {
   to: string
   onClick: () => void
   children: ReactNode
   compact?: boolean
+  icon?: ReactNode
 }) {
   return (
     <Link
       to={to}
       onClick={onClick}
-      className={`block min-h-[44px] border-b border-border px-6 py-4 uppercase text-ink ${
+      className={`flex min-h-[44px] items-center gap-3 border-b border-border px-6 py-4 uppercase text-ink ${
         compact ? 'text-[13px] font-medium tracking-[0.06em]' : 'text-[15px] font-bold tracking-[0.04em]'
       }`}
     >
+      {icon}
       {children}
     </Link>
   )
