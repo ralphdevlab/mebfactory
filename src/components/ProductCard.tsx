@@ -10,10 +10,10 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       to={`/product/${product.id}`}
-      className="group block border border-transparent hover:border-[#E8C4B8]"
-      style={{ background: 'linear-gradient(135deg, #FDF3E7 0%, #FAE8D8 100%)' }}
+      className="group block hover:shadow-[0_4px_20px_rgba(139,94,82,0.12)]"
+      style={{ transition: 'box-shadow 200ms ease' }}
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-paper">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-[8px] bg-paper">
         <ProductImage
           src={product.images?.[0]}
           alt={product.name}

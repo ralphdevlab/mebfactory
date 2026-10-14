@@ -56,7 +56,7 @@ export default function HeroSlider() {
         <p className="text-[32px] font-bold uppercase leading-none md:text-[48px]">{slide.headline}</p>
         <Link
           to={slide.to}
-          className="mt-2 bg-black px-8 py-3 text-[11px] uppercase tracking-[0.14em] text-white"
+          className="mt-2 rounded-[4px] bg-black px-8 py-3 text-[11px] uppercase tracking-[0.14em] text-white"
         >
           {slide.cta}
         </Link>

@@ -112,7 +112,7 @@ export default function Shop() {
                 key={c}
                 type="button"
                 onClick={() => setChip(c)}
-                className={`shrink-0 whitespace-nowrap border px-3.5 py-2 text-[11px] uppercase tracking-[0.08em] transition-colors ${
+                className={`shrink-0 whitespace-nowrap rounded-[20px] border px-3.5 py-2 text-[11px] uppercase tracking-[0.08em] transition-colors ${
                   chip === c
                     ? 'border-[#8B5E52] bg-[#8B5E52] text-white'
                     : 'border-[#E8C4B8] bg-white text-ink hover:border-[#8B5E52]'
@@ -141,7 +141,7 @@ export default function Shop() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-px bg-[#E8C49A] md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
@@ -149,7 +149,7 @@ export default function Shop() {
       ) : filtered.length === 0 ? (
         <p className="py-20 text-center text-sm text-muted">No products match the selected filters.</p>
       ) : (
-        <div className="grid grid-cols-2 gap-px bg-[#E8C49A] md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {filtered.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

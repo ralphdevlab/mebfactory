@@ -124,7 +124,7 @@ export default function Cart() {
         <Link to="/checkout" className="ml-auto flex-1">
           <button
             type="button"
-            className="flex h-12 w-full items-center justify-center bg-ink text-[13px] uppercase tracking-[0.1em] text-white"
+            className="flex h-12 w-full items-center justify-center rounded-[4px] bg-ink text-[13px] uppercase tracking-[0.1em] text-white"
           >
             Checkout
           </button>

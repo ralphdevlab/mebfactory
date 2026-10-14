@@ -190,7 +190,7 @@ export default function ProductDetail() {
             type="button"
             disabled={!selectedSize}
             onClick={handleAddToCart}
-            className="mt-6 flex h-[52px] w-full items-center justify-center bg-ink text-[14px] uppercase tracking-[0.1em] text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+            className="mt-6 flex h-[52px] w-full items-center justify-center rounded-[4px] bg-ink text-[14px] uppercase tracking-[0.1em] text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40"
           >
             {added ? 'Added to Cart' : 'Add to Cart'}
           </button>

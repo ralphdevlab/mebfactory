@@ -134,7 +134,7 @@ function ProductSection({
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-px bg-[#E8C49A] md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className={i >= 6 ? 'hidden md:block' : ''}>
               <ProductCardSkeleton />
@@ -142,7 +142,7 @@ function ProductSection({
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-px bg-[#E8C49A] md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {products.map((product, i) => (
             <div key={product.id} className={i >= 6 ? 'hidden md:block' : ''}>
               <ProductCard product={product} />
