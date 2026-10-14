@@ -59,7 +59,7 @@ export default function Home() {
   const school = selectedSchool ? schoolName(selectedSchool) : undefined
 
   return (
-    <div className="bg-white">
+    <div className="bg-transparent">
       <SchoolSelectorModal open={modalOpen} onClose={() => setModalOpen(false)} />
 
       {/* 1. Hero */}

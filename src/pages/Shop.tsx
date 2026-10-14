@@ -3,10 +3,16 @@ import { useSearchParams } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import ProductCardSkeleton from '../components/ProductCardSkeleton'
 import { fetchProducts } from '../lib/products'
+import { SCHOOLS } from '../data/schools'
 import type { Product } from '../types'
 
-type Chip = 'ALL' | 'NEW IN' | 'SALE' | 'WOMAN' | 'MAN' | 'TOPS' | 'BOTTOMS' | 'OUTERWEAR'
-const CHIPS: Chip[] = ['ALL', 'NEW IN', 'SALE', 'WOMAN', 'MAN', 'TOPS', 'BOTTOMS', 'OUTERWEAR']
+const COLLEGE_SLUGS = SCHOOLS.map((s) => s.collection)
+// e.g. 'UF' | 'FSU' | 'UCF' | ... - one chip per college collection.
+type CollegeChip = Uppercase<(typeof COLLEGE_SLUGS)[number]>
+const COLLEGE_CHIPS = COLLEGE_SLUGS.map((slug) => slug.toUpperCase()) as CollegeChip[]
+
+type Chip = 'ALL' | 'NEW IN' | 'SALE' | 'WOMAN' | 'TOPS' | 'BOTTOMS' | CollegeChip
+const CHIPS: Chip[] = ['ALL', 'NEW IN', 'SALE', 'WOMAN', 'TOPS', 'BOTTOMS', ...COLLEGE_CHIPS]
 
 type Sort = 'new' | 'price-asc' | 'price-desc'
 const SORTS: { value: Sort; label: string }[] = [
@@ -22,26 +28,26 @@ export default function Shop() {
   const urlNew = searchParams.get('new') === 'true'
   const urlSale = searchParams.get('sale') === 'true'
 
+  const urlCollegeChip = COLLEGE_SLUGS.includes(urlCollection)
+    ? (urlCollection.toUpperCase() as CollegeChip)
+    : null
+
   const initialChip: Chip = urlNew
     ? 'NEW IN'
     : urlSale
       ? 'SALE'
       : urlCategory === 'woman'
         ? 'WOMAN'
-        : urlCategory === 'man'
-          ? 'MAN'
-          : urlCategory === 'tops'
-            ? 'TOPS'
-            : urlCategory === 'bottoms'
-              ? 'BOTTOMS'
-              : urlCategory === 'outerwear'
-                ? 'OUTERWEAR'
-                : 'ALL'
+        : urlCategory === 'tops'
+          ? 'TOPS'
+          : urlCategory === 'bottoms'
+            ? 'BOTTOMS'
+            : urlCollegeChip ?? 'ALL'
 
-  // A `?category=` that isn't one of the chips above (e.g. from the mega
-  // menu) still filters the list even though it has no dedicated chip.
-  const extraCategory =
-    urlCategory && !['woman', 'man', 'tops', 'bottoms', 'outerwear'].includes(urlCategory) ? urlCategory : ''
+  // A `?category=` that isn't one of the chips above (e.g. "man", "jeans"
+  // from the mega menu or footer) still filters the list even though it
+  // has no dedicated chip.
+  const extraCategory = urlCategory && !['woman', 'tops', 'bottoms'].includes(urlCategory) ? urlCategory : ''
 
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -73,10 +79,9 @@ export default function Shop() {
       if (chip === 'NEW IN') return p.tag === 'new'
       if (chip === 'SALE') return p.tag === 'sale'
       if (chip === 'WOMAN') return p.category.toLowerCase().includes('woman')
-      if (chip === 'MAN') return p.category.toLowerCase().includes('man')
       if (chip === 'TOPS') return p.category.toLowerCase().includes('top')
       if (chip === 'BOTTOMS') return p.category.toLowerCase().includes('bottom')
-      if (chip === 'OUTERWEAR') return p.category.toLowerCase().includes('outerwear')
+      if ((COLLEGE_CHIPS as string[]).includes(chip)) return p.collection === chip.toLowerCase()
       return true
     })
     const price = (p: Product) => p.salePrice ?? p.price
@@ -86,7 +91,7 @@ export default function Shop() {
   }, [products, chip, sort, extraCategory])
 
   return (
-    <div className="bg-white">
+    <div className="bg-transparent">
       <div className="sticky top-[52px] z-30 border-b border-border bg-white md:top-[60px]">
         <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-6">
           <div className="scrollbar-hide flex flex-1 gap-2 overflow-x-auto">

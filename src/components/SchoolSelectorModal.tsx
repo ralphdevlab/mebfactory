@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSchool } from '../context/SchoolContext'
 import { SCHOOLS } from '../data/schools'
 
@@ -8,8 +8,20 @@ import { SCHOOLS } from '../data/schools'
 // the popup from showing again.
 const SEEN_KEY = 'mebfactory_school_selected'
 
+// Click feedback timeline for a school button: 150ms press (scale to 0.95),
+// then a 300ms checkmark flash before the pick actually takes effect and
+// the modal closes.
+const PRESS_MS = 150
+const CHECK_MS = 300
+
+interface ClickState {
+  collection: string
+  phase: 'press' | 'check'
+}
+
 export default function SchoolSelectorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { setSelectedSchool } = useSchool()
+  const [clicked, setClicked] = useState<ClickState | null>(null)
 
   useEffect(() => {
     if (!open) return
@@ -31,13 +43,24 @@ export default function SchoolSelectorModal({ open, onClose }: { open: boolean; 
     }
   }
 
-  function selectSchool(collection: string) {
-    setSelectedSchool(collection)
-    markSeen()
-    onClose()
+  function handleSelect(collection: string) {
+    // Ignore taps on other buttons (or repeats) while one is mid-animation.
+    if (clicked) return
+
+    setClicked({ collection, phase: 'press' })
+    setTimeout(() => {
+      setClicked({ collection, phase: 'check' })
+      setTimeout(() => {
+        setSelectedSchool(collection)
+        markSeen()
+        onClose()
+        setClicked(null)
+      }, CHECK_MS)
+    }, PRESS_MS)
   }
 
   function dismiss() {
+    if (clicked) return
     markSeen()
     onClose()
   }
@@ -54,17 +77,25 @@ export default function SchoolSelectorModal({ open, onClose }: { open: boolean; 
         </p>
 
         <div className="mt-6 grid grid-cols-2 gap-3">
-          {SCHOOLS.map((school) => (
-            <button
-              key={school.collection}
-              type="button"
-              onClick={() => selectSchool(school.collection)}
-              className="w-full px-4 py-3.5 text-center text-[12px] font-bold uppercase text-white"
-              style={{ backgroundColor: school.color }}
-            >
-              {school.name} {school.emoji}
-            </button>
-          ))}
+          {SCHOOLS.map((school) => {
+            const isThisButton = clicked?.collection === school.collection
+            const pressed = isThisButton && clicked.phase === 'press'
+            const checked = isThisButton && clicked.phase === 'check'
+
+            return (
+              <button
+                key={school.collection}
+                type="button"
+                onClick={() => handleSelect(school.collection)}
+                className={`w-full px-4 py-3.5 text-center text-[12px] font-bold uppercase transition-transform duration-150 ease-out ${
+                  school.darkText ? 'text-ink' : 'text-white'
+                } ${pressed ? 'scale-95' : 'scale-100'}`}
+                style={{ backgroundColor: school.color }}
+              >
+                {checked ? `✓ ${school.name}` : `${school.name} ${school.emoji}`}
+              </button>
+            )
+          })}
         </div>
 
         <button

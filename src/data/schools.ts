@@ -6,12 +6,14 @@ export interface School {
   emoji: string
   collection: string
   color: string
+  // UCF's gold is too light for white text to read on - true for it only.
+  darkText?: boolean
 }
 
 export const SCHOOLS: School[] = [
   { name: 'GO GATORS', emoji: '🐊', collection: 'uf', color: '#FA4616' },
   { name: 'GO NOLES', emoji: '🍢', collection: 'fsu', color: '#782F40' },
-  { name: 'GO KNIGHTS', emoji: '⚔️', collection: 'ucf', color: '#FFC904' },
+  { name: 'GO KNIGHTS', emoji: '⚔️', collection: 'ucf', color: '#FFC904', darkText: true },
   { name: 'GO BULLS', emoji: '🐂', collection: 'usf', color: '#006747' },
   { name: 'GO OWLS', emoji: '🦉', collection: 'fau', color: '#003F7F' },
   { name: 'GO CANES', emoji: '🌀', collection: 'miami', color: '#F47321' },

@@ -35,7 +35,15 @@
     font-family: var(--font-sans);
     font-weight: 400;
     color: var(--color-ink);
-    background-color: var(--color-bg);
+    background: linear-gradient(135deg,
+      #fdf6f0 0%,
+      #faf0f5 25%,
+      #f5f0fa 50%,
+      #f0f5fa 75%,
+      #faf5f0 100%
+    );
+    background-attachment: fixed;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
